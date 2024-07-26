@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-operations
+      author: Mariya
+      changes:
+        - createTable:
+            tableName: operations
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    foreignKey: true
+                    nullable: false
+              - column:
+                  name: related_id
+                  type: uuid
+                  constraints:
+                    foreignKey: true
+                    nullable: false
+              - column:
+                  name: operation_type
+                  type: uuid
+                  constraints:
+                    foreignKey: true
+                    nullable: false

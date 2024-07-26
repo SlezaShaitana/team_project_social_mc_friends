@@ -6,8 +6,8 @@ import lombok.Data;
 public class FriendShortDto {
 private String id;
 private boolean isDeleted;
-private StatusCode statusCode;
+private String statusCode;
 private String friendId;
-private StatusCode previousStatusCode;
+private String previousStatusCode;
 private int rating;
 }

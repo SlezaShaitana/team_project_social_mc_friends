@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-friends
+      author: Mariya
+      changes:
+        - renameTable:
+            newTableName: relationship
+            oldTableName: friends
+
+

@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: rename_column-relationship
+      author: Mariya
+      changes:
+        - renameColumn:
+            newColumnName: user_id
+            oldColumnName: related_user_id
+            tableName: relationship
+        - renameColumn:
+            newColumnName: related_user_id
+            oldColumnName: friend_id
+            tableName: relationship

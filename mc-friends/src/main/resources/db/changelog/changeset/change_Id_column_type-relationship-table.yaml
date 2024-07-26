@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-id-type-relationship
+      author: Mariya
+      changes:
+        - dropColumn:
+            columnName: id
+            tableName: relationship
+        - addColumn:
+            tableName: relationship
+            columns:
+              - column:
+                  name: new_id
+                  type: uuid

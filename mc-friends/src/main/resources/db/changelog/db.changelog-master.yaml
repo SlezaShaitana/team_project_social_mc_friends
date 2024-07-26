@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/create-friends-table.yaml
+  - include:
+      file: db/changelog/changeset/rename1_column-relationship-table.yaml
+  - include:
+      file: db/changelog/changeset/create-operations-table.yaml
+  - include:
+      file: db/changelog/changeset/add_column-relationship-table.yaml
+  - include:
+      file: db/changelog/changeset/change_column_type-operations-table.yaml
+  - include:
+      file: db/changelog/changeset/rename_column-operations-table.yaml
+  - include:
+      file: db/changelog/changeset/change1_columntype-operations-table.yaml
+  - include:
+      file: db/changelog/changeset/change2_columntype-operations-table.yaml
+  - include:
+      file: db/changelog/changeset/change_Id_column_type-relationship-table.yaml
+  - include:
+      file: db/changelog/changeset/rename_Id_column-relationship-table.yaml
+  - include:
+      file: db/changelog/changeset/change_columntype-relationship-table.yaml

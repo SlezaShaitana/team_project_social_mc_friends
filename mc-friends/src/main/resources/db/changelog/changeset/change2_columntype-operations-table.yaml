@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-operation_type_type-operations
+      author: Mariya
+      changes:
+        -  modifyDataType:
+             columnName: operation_type
+             newDataType: varchar(30)
+             tableName: operations

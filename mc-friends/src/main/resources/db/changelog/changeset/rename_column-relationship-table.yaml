@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: rename_add_column-relationship
+      author: Mariya
+      changes:
+        - renameColumn:
+            newColumnName: related_user_id
+            oldColumnName: user_id
+            tableName: relationship
+        - addColumn:
+            tableName: relationship
+            columns:
+              - column:
+                  name: status
+                  type: varchar(20)

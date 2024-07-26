@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: rename_id_column-relationship
+      author: Mariya
+      changes:
+        - renameColumn:
+            newColumnName: id
+            oldColumnName: new_id
+            tableName: relationship

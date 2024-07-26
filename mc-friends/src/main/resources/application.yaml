@@ -1,0 +1,22 @@
+Server:
+  port:8080
+servlet:
+  context-path: /app
+spring:
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+    drop-first: false
+  datasource:
+    username: mc-friends
+    password: mc-friends
+    url: jdbc:postgresql://localhost:5432/mc-friends?stringtype=unspecified
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+app:
+  kafka:
+    kafkaMessageTopic: "topic-2"
+    kafkaMessageGroupId: "group-id"

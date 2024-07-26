@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-id-type
+      author: Mariya
+      changes:
+        - dropColumn:
+            columnName: id
+            tableName: operations
+        - addColumn:
+            tableName: operations
+            columns:
+              - column:
+                  name: new_id
+                  type: uuid
