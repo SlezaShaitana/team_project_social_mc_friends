@@ -4,7 +4,11 @@ import com.social.mc_friends.dto.UserShortDto;
 import com.social.mc_friends.model.Relationship;
 import com.social.mc_friends.model.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -26,4 +30,5 @@ public class Mapper {
         friendShortDto.setRating(relationship.getRating());
         return friendShortDto;
     }
+
 }

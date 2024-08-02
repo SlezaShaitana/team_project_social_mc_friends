@@ -20,3 +20,9 @@ app:
   kafka:
     kafkaMessageTopic: "topic-2"
     kafkaMessageGroupId: "group-id"
+  eureka:
+    client:
+     service-url:
+       defaultZone: http://localhost:8888/eureka/
+       register-with-eureka: true
+       fetch-registry: true

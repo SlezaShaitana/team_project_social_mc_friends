@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: mc-friends
       POSTGRES_DB: mc-friends
     ports:
-      - 5432:5432
+      - "5432:5432"
   zookeeper:
     image: confluentinc/cp-zookeeper:6.2.0
     environment:
@@ -30,5 +30,16 @@ services:
       KAFKA_LISTENER_SEQURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPIC_ENABLE: 'true'
+  eureka-server:
+    image: eurekaserver:latest
+    container_name: eureka-server
+    ports:
+      - "8888:8888"
+    networks:
+      - eureka-network
+networks:
+  eureka-network:
+    driver: bridge
+
 
 

@@ -1,23 +1,32 @@
 package com.social.mc_friends.service.impl;
 
 import com.social.mc_friends.dto.*;
+import com.social.mc_friends.mapper.Mapper;
 import com.social.mc_friends.model.*;
 import com.social.mc_friends.repository.*;
+import com.social.mc_friends.repository.specificftions.FriendsSpecifications;
 import com.social.mc_friends.service.FriendService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class FriendServiceImpl implements FriendService {
 //    private final UUID userId = UUID.randomUUID(); //Будет взят из токена
-    private final UUID userId = UUID.fromString("12feafdd-3f5d-486a-b15c-a58153eac15d");
+    private final UUID userId = UUID.fromString("a93a8071-f0b3-4ef8-9693-6fa668e9ea77");
     private final RelationshipRepository relationshipRepository;
     private final OperationRepository operationRepository;
+    private final Mapper mapper;
     @Override
     @Transactional
     public Relationship confirmFriendRequest(UUID relatedUserId) {
@@ -50,50 +59,71 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public Relationship subscribeToFriend(UUID relatedUserId) {
         Operation operation = createOperation(relatedUserId, OperationType.SUBSCRIPTION);
-
         Relationship relationship = makeRelationship(userId, relatedUserId, StatusCode.SUBSCRIBED, operation);
         saveReverseRelationship(relatedUserId, userId, StatusCode.WATCHING, operation);
         return relationship;
     }
 
     @Override
-    public List<User> getFriendList(FriendSearchDto searchDto, Pageable page) {
-        return null;
+    public Page<Relationship> getFriendList(FriendSearchDto searchDto, Integer page) {
+        Specification<Relationship> spec = Specification.where(null);
+        if (searchDto.getId() != null){
+            spec = spec.and(FriendsSpecifications.operationIdEquals(UUID.fromString(searchDto.getId())));
+        }
+        if (searchDto.isDeleted()) {
+            spec = spec.and(FriendsSpecifications.friendIsDelete(String.valueOf(StatusCode.NONE)));
+        }
+        if (searchDto.getIdFrom() != null){
+            spec = spec.and(FriendsSpecifications.friendIdFromEquals(UUID.fromString(searchDto.getIdFrom())));
+        }
+        if (searchDto.getIdTo() != null){
+            spec = spec.and(FriendsSpecifications.friendIdToEquals(UUID.fromString(searchDto.getIdTo())));
+        }
+        if (searchDto.getStatusCode() != null){
+            spec = spec.and(FriendsSpecifications.friendsStatusEquals(StatusCode.valueOf(searchDto.getStatusCode())));
+        }
+        if (searchDto.getPreviousStatusCode() != null){
+            spec = spec.and(FriendsSpecifications.friendsPreviousStatusEquals(StatusCode.valueOf(searchDto.getStatusCode())));
+        }
+       return relationshipRepository.findAll(spec, PageRequest.of(page - 1, 3));
     }
 
     @Override
-    public FriendShortDto getFriendshipNote(UUID uuid) {
-        return null;
+    public Relationship getFriendshipNote(UUID relatedUserId) {
+        return relationshipRepository.findByUserIdAndRelatedUserId(userId, relatedUserId);
     }
 
     @Override
-    public void deleteFriend(UUID uuid) {
+    public void deleteFriend(UUID relatedUserId) {
+        Operation operation = createOperation(relatedUserId, OperationType.REMOVAL);
+        Relationship relationship = relationshipRepository.findByUserIdAndRelatedUserId(userId, relatedUserId);
+        StatusCode previousStatusCode = relationship.getStatusCode();
+        relationship.setStatusCode(StatusCode.NONE);
+        relationship.setPreviousStatusCode(previousStatusCode);
+        relationship.setStatusChangeId(operation.getUuid());
+        relationshipRepository.save(relationship);
 
     }
 
     @Override
-    public List<UUID> getFriendsIdList(StatusCode status) {
-        return null;
+    public List<UUID> getUserIdList(String status) {
+        return relationshipRepository.findByStatus(status);
     }
 
     @Override
-    public List<FriendShortDto> getRecommendations(FriendSearchDto searchDto) {
-        return null;
+    public List<UUID> getAllFriendsIdList() {//Для текущего пользователя
+        return relationshipRepository.findAllFriendsId(userId);
     }
 
     @Override
-    public List<UUID> getAllFriendsIdList() {
-        return null;
-    }
-
-    @Override
-    public List<UUID> getFriendsIdListByUserId(UUID userId) {
-        return null;
+    public List<UUID> getFriendsIdListByUserId(UUID id) {
+        return relationshipRepository.findAllFriendsId(id);
     }
 
     @Override
     public Integer getFriendRequestCount() {
-        return null;
+       List<Relationship> relationshipList = relationshipRepository.findByUserIdAndStatusCode(userId);
+        return relationshipList.size();
     }
 
     @Override
@@ -103,7 +133,11 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public List<UUID> getFriendsWhoBlockedUser() {
-        return null;
+        return relationshipRepository.findBlockingFriendsId(userId);
+    }
+    @Override
+    public List<Relationship> getRecommendations(FriendSearchDto searchDto) {
+        return relationshipRepository.findAllFriends(UUID.fromString(searchDto.getIdTo()));
     }
 
     private Operation createOperation(UUID relatedUserId, OperationType operationType){
