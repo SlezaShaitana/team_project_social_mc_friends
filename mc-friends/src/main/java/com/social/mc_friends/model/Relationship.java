@@ -9,7 +9,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @Entity
-@Table(name = "relationship",indexes = {@Index(name = "friendIndex", columnList = "user_id, related_user_id", unique = true)})
+@Table(name = "relationship"/*,indexes = {@Index(name = "friendIndex", columnList = "user_id, related_user_id", unique = true)}*/)
 public class Relationship {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -27,5 +27,6 @@ public class Relationship {
     private UUID statusChangeId;
     @Column(columnDefinition = "INT", nullable = true)
     private int rating;
+
 
 }

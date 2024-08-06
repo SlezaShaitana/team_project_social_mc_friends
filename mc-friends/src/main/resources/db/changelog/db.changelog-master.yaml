@@ -21,3 +21,5 @@ databaseChangeLog:
       file: db/changelog/changeset/rename_Id_column-relationship-table.yaml
   - include:
       file: db/changelog/changeset/change_columntype-relationship-table.yaml
+  - include:
+      file: db/changelog/changeset/create_index-relationship.yaml

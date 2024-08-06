@@ -13,12 +13,12 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class Mapper {
-        public UserShortDto mapToUserShortDto(User user){
-        UserShortDto userShortDto = new UserShortDto();
-        userShortDto.setId(String.valueOf(user.getUuid()));
-        userShortDto.setName(user.getName());
-        return userShortDto;
-    }
+//        public UserShortDto mapToUserShortDto(User user){
+//        UserShortDto userShortDto = new UserShortDto();
+//        userShortDto.setId(String.valueOf(user.getUuid()));
+//        userShortDto.setName(user.getName());
+//        return userShortDto;
+//    }
     public FriendShortDto mapToFriendShortDto(Relationship relationship){
         FriendShortDto friendShortDto = new FriendShortDto();
         friendShortDto.setId(String.valueOf(relationship.getStatusChangeId()));
