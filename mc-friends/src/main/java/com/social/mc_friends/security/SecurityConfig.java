@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
@@ -18,10 +20,13 @@ import org.springframework.stereotype.Component;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    @Autowired
-    private JwtTokenFilter jwtTokenFilter;
-    @Autowired
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    final private JwtTokenFilter jwtTokenFilter;
+    final private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new InMemoryUserDetailsManager();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

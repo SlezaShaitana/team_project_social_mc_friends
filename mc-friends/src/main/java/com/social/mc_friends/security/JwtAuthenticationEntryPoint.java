@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper = new ObjectMapper();
 

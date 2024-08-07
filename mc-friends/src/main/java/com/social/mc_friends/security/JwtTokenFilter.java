@@ -1,10 +1,13 @@
 package com.social.mc_friends.security;
 
 import com.social.mc_friends.dto.UserShortDto;
+import com.social.mc_friends.service.impl.FriendServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,15 +21,18 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
     @Autowired
     private  JwtValidation  jwtValidation;
     @Autowired
     private JwtUtils jwtUtils;
+    @Getter
+    public UUID userId;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -42,8 +48,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            userId = UUID.fromString(userShortDto.getUserId());
         }
         filterChain.doFilter(request, response);
+
         }
     private String getToken(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");

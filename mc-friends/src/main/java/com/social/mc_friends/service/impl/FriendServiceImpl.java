@@ -1,10 +1,13 @@
 package com.social.mc_friends.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.social.mc_friends.dto.*;
 import com.social.mc_friends.mapper.Mapper;
 import com.social.mc_friends.model.*;
 import com.social.mc_friends.repository.*;
 import com.social.mc_friends.repository.specificftions.FriendsSpecifications;
+import com.social.mc_friends.security.JwtTokenFilter;
+import com.social.mc_friends.security.JwtUtils;
 import com.social.mc_friends.service.FriendService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +25,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FriendServiceImpl implements FriendService {
-//    private final UUID userId = UUID.randomUUID(); //Будет взят из токена
-    private final UUID userId = UUID.fromString("a93a8071-f0b3-4ef8-9693-6fa668e9ea77");
+
     private final RelationshipRepository relationshipRepository;
     private final OperationRepository operationRepository;
-    private final Mapper mapper;
+    private final JwtTokenFilter jwtTokenFilter;
+    UUID userId = jwtTokenFilter.getUserId();
+
     @Override
     @Transactional
     public Relationship confirmFriendRequest(UUID relatedUserId) {

@@ -1,5 +1,5 @@
 Server:
-  port:8080
+  port:8090
 servlet:
   context-path: /app
 spring:
@@ -18,8 +18,8 @@ spring:
     bootstrap-servers: localhost:9092
 app:
   kafka:
-    kafkaMessageTopic: "topic-2"
-    kafkaMessageGroupId: "group-id"
+    kafkaMessageTopic: "REGISTER_TOP"
+    kafkaMessageGroupId: "mc-friends"
   eureka:
     client:
      service-url:

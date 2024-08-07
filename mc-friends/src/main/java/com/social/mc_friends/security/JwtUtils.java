@@ -22,4 +22,7 @@ public class JwtUtils {
         Base64.Decoder decoder = Base64.getUrlDecoder();
         return new String(decoder.decode(chunks[1]));
     }
+    public String getIdFromToken(String token) throws JsonProcessingException {
+        return mapToUserShortDto(token).getUserId();
+    }
 }
