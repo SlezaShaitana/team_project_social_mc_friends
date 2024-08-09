@@ -1,6 +1,7 @@
 package com.social.mc_friends.v1;
 
 import com.social.mc_friends.dto.*;
+import com.social.mc_friends.exceptons.UserException;
 import com.social.mc_friends.mapper.Mapper;
 import com.social.mc_friends.model.Relationship;
 import com.social.mc_friends.service.impl.FriendServiceImpl;
@@ -23,27 +24,49 @@ public class ApiController {
     @PutMapping("/{id}/approve")
     public ResponseEntity<FriendShortDto> confirmFriendRequest(@PathVariable("id") String id){
         UUID uuid = UUID.fromString(id);
-        return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.confirmFriendRequest((uuid))));
+        try {
+            return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.confirmFriendRequest((uuid))));
+        } catch (UserException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
     @PutMapping("/unblock/{id}")
     public ResponseEntity<FriendShortDto> unblockFriend(@PathVariable("id") String id){
         UUID uuid = UUID.fromString(id);
-        return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.unblockFriend(uuid)));
+        try {
+            return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.unblockFriend(uuid)));
+        } catch (UserException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
     @PutMapping("/block/{id}")
     public ResponseEntity<FriendShortDto>  blockFriend(@PathVariable("id") String id){
         UUID uuid = UUID.fromString(id);
-        return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.blockFriend(uuid)));
+        try {
+            return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.blockFriend(uuid)));
+        } catch (UserException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
     @PostMapping("/{id}/request")
     public ResponseEntity<FriendShortDto> createFriendRequest(@PathVariable("id") String id){
         UUID uuid = UUID.fromString(id);
-        return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.createFriendRequest(uuid)));
+        try {
+            return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.createFriendRequest(uuid)));
+        } catch (UserException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
     @PostMapping("/subscribe/{id}")
     public ResponseEntity<FriendShortDto> subscribeToFriend(@PathVariable("id") String id){
         UUID uuid = UUID.fromString(id);
-        return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.subscribeToFriend(uuid)));
+        try {
+            return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.subscribeToFriend(uuid)));
+        } catch (UserException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
     @GetMapping
     public Page<FriendShortDto> getFriendList(@RequestBody FriendSearchDto searchDto,

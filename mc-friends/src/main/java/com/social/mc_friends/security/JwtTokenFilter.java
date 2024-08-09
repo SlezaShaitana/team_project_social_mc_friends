@@ -1,6 +1,7 @@
 package com.social.mc_friends.security;
 
 import com.social.mc_friends.dto.UserShortDto;
+import com.social.mc_friends.exceptons.UserException;
 import com.social.mc_friends.service.impl.FriendServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,25 +16,21 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.util.StringUtils;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
-    @Autowired
-    private  JwtValidation  jwtValidation;
-    @Autowired
-    private JwtUtils jwtUtils;
-    @Getter
-    public UUID userId;
-    @Override
+    private final JwtValidation jwtValidation;
+    private final JwtUtils jwtUtils;
+        @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String token = getToken(request);
@@ -46,16 +43,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userShortDto.getEmail(), userShortDto.getUserId(), authorities);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            userId = UUID.fromString(userShortDto.getUserId());
+
+            FriendServiceImpl.userId = UUID.fromString(userShortDto.getUserId());
         }
         filterChain.doFilter(request, response);
-
         }
     private String getToken(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
-
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);
         }

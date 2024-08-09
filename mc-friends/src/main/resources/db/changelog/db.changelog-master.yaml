@@ -23,3 +23,5 @@ databaseChangeLog:
       file: db/changelog/changeset/change_columntype-relationship-table.yaml
   - include:
       file: db/changelog/changeset/create_index-relationship.yaml
+  - include:
+      file: db/changelog/changeset/create-users-table.yaml

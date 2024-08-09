@@ -1,13 +1,11 @@
 package com.social.mc_friends.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.social.mc_friends.dto.*;
-import com.social.mc_friends.mapper.Mapper;
+import com.social.mc_friends.exceptons.UserException;
 import com.social.mc_friends.model.*;
 import com.social.mc_friends.repository.*;
 import com.social.mc_friends.repository.specificftions.FriendsSpecifications;
-import com.social.mc_friends.security.JwtTokenFilter;
-import com.social.mc_friends.security.JwtUtils;
 import com.social.mc_friends.service.FriendService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -28,12 +23,14 @@ public class FriendServiceImpl implements FriendService {
 
     private final RelationshipRepository relationshipRepository;
     private final OperationRepository operationRepository;
-    private final JwtTokenFilter jwtTokenFilter;
-    UUID userId = jwtTokenFilter.getUserId();
+    private final UserRepository userRepository;
+//    private final UUID userId = UUID.fromString("55fe221a-f4e7-49e4-83c1-bb63b0f67aa4");
+
+     public static UUID userId;
 
     @Override
     @Transactional
-    public Relationship confirmFriendRequest(UUID relatedUserId) {
+    public Relationship confirmFriendRequest(UUID relatedUserId) throws UserException{
             Operation operation = createOperation(relatedUserId, OperationType.FRIENDSHIP_CONFIRMATION);
             Relationship relationship = makeRelationship(userId,  relatedUserId, StatusCode.FRIEND, operation);
             saveReverseRelationship(relatedUserId, userId, StatusCode.FRIEND, operation);
@@ -41,19 +38,19 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Relationship unblockFriend(UUID relatedUserId) {
+    public Relationship unblockFriend(UUID relatedUserId) throws UserException {
             Operation operation = createOperation(relatedUserId, OperationType.UNBLOCKING);
             return makeRelationship(userId, relatedUserId, StatusCode.FRIEND, operation);
     }
 
     @Override
-    public Relationship blockFriend(UUID relatedUserId) {
+    public Relationship blockFriend(UUID relatedUserId) throws UserException {
             Operation operation = createOperation(relatedUserId, OperationType.BLOCKING);
             return makeRelationship(userId, relatedUserId, StatusCode.BLOCKED, operation);
     }
 
     @Override
-    public Relationship createFriendRequest(UUID relatedUserId) {
+    public Relationship createFriendRequest(UUID relatedUserId) throws UserException {
         Operation operation = createOperation(relatedUserId, OperationType.FRIEND_REQUEST);
         Relationship relationship = makeRelationship(userId, relatedUserId, StatusCode.REQUEST_TO, operation);
         saveReverseRelationship(relatedUserId, userId, StatusCode.REQUEST_FROM, operation);
@@ -61,7 +58,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Relationship subscribeToFriend(UUID relatedUserId) {
+    public Relationship subscribeToFriend(UUID relatedUserId) throws UserException {
         Operation operation = createOperation(relatedUserId, OperationType.SUBSCRIPTION);
         Relationship relationship = makeRelationship(userId, relatedUserId, StatusCode.SUBSCRIBED, operation);
         saveReverseRelationship(relatedUserId, userId, StatusCode.WATCHING, operation);
@@ -152,7 +149,10 @@ public class FriendServiceImpl implements FriendService {
         operationRepository.save(operation);
         return operation;
     }
-    private Relationship makeRelationship(UUID userId, UUID relatedUserId, StatusCode  statusCode, Operation operation){
+    private Relationship makeRelationship(UUID userId, UUID relatedUserId, StatusCode  statusCode, Operation operation) throws UserException {
+        if(UserExists(userId) || UserExists(relatedUserId)){
+            throw new UserException("User with ID " + userId + " or user with ID " + relatedUserId + " does not exist");
+        }
         Relationship relationship = relationshipRepository.findByUserIdAndRelatedUserId(userId, relatedUserId);
         if (relationship == null) {
             relationship = new Relationship();
@@ -167,7 +167,10 @@ public class FriendServiceImpl implements FriendService {
         return relationship;
     }
 
-    private void saveReverseRelationship(UUID relatedUserId, UUID userId, StatusCode  statusCode, Operation operation){
+    private void saveReverseRelationship(UUID relatedUserId, UUID userId, StatusCode  statusCode, Operation operation) throws UserException {
+        if(UserExists(userId) || UserExists(relatedUserId)){
+            throw new UserException("User with ID " + userId + " or user with ID " + relatedUserId + " does not exist");
+        }
         Relationship reverseRelationship = relationshipRepository.findByUserIdAndRelatedUserId(relatedUserId, userId);
         if (reverseRelationship == null) {
             reverseRelationship = new Relationship();
@@ -179,6 +182,9 @@ public class FriendServiceImpl implements FriendService {
         reverseRelationship.setPreviousStatusCode(previousStatus);
         reverseRelationship.setStatusChangeId(operation.getUuid());
         relationshipRepository.save(reverseRelationship);
+    }
+    private boolean UserExists(UUID userId){
+        return !userRepository.findById(userId).isPresent();
     }
 }
 

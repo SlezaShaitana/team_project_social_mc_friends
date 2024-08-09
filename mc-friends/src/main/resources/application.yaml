@@ -18,8 +18,8 @@ spring:
     bootstrap-servers: localhost:9092
 app:
   kafka:
-    kafkaMessageTopic: "REGISTER_TOP"
-    kafkaMessageGroupId: "mc-friends"
+    kafkaMessageTopic: "registerTopic"
+    kafkaMessageGroupId: "Userinfo"
   eureka:
     client:
      service-url:
