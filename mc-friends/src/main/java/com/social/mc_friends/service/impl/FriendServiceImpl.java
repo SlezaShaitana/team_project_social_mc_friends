@@ -6,6 +6,7 @@ import com.social.mc_friends.exceptons.UserException;
 import com.social.mc_friends.model.*;
 import com.social.mc_friends.repository.*;
 import com.social.mc_friends.repository.specificftions.FriendsSpecifications;
+import com.social.mc_friends.security.JwtTokenFilter;
 import com.social.mc_friends.service.FriendService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,11 @@ public class FriendServiceImpl implements FriendService {
     private final RelationshipRepository relationshipRepository;
     private final OperationRepository operationRepository;
     private final UserRepository userRepository;
+    private final JwtTokenFilter jwtTokenFilter;
 //    private final UUID userId = UUID.fromString("55fe221a-f4e7-49e4-83c1-bb63b0f67aa4");
 
-     public static UUID userId;
+     public UUID userId;
+
 
     @Override
     @Transactional
