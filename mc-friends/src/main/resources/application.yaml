@@ -3,26 +3,41 @@ Server:
 servlet:
   context-path: /app
 spring:
+  application:
+    name: mc-friends
+
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     enabled: true
     drop-first: false
+    default-schema: mc-friends
   datasource:
     username: mc-friends
     password: mc-friends
-    url: jdbc:postgresql://localhost:5432/mc-friends?stringtype=unspecified
+    url: jdbc:postgresql://localhost:5435/mc-friends?stringtype=unspecified
     driver-class-name: org.postgresql.Driver
+    dialect: org.hibernate.dialect.PostgreSQL8Dialect
+    hikari:
+      connection-init-sql: create schema if not exists account
+      connection-timeout: 10000
+
+
   jpa:
+    generate-ddl: false
+    open-in-view: true
+    hibernate:
+      ddl-auto: none
     show-sql: true
   kafka:
     bootstrap-servers: localhost:9092
-app:
-  kafka:
     kafkaMessageTopic: "registerTopic"
     kafkaMessageGroupId: "Userinfo"
-  eureka:
-    client:
-     service-url:
-       defaultZone: http://localhost:8888/eureka/
-       register-with-eureka: true
-       fetch-registry: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8888/eureka/
+      register-with-eureka: true
+      fetch-registry: true
+    instance:
+      hostname: localhost
