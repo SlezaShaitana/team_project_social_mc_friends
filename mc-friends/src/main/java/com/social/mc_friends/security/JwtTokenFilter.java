@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtValidation jwtValidation;
     private final JwtUtils jwtUtils;
-   private final FriendServiceImpl friendService;
 
         @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -47,7 +46,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            friendService.userId = UUID.fromString(userShortDto.getUserId());
+            FriendServiceImpl.userId = UUID.fromString(userShortDto.getUserId());
         }
         filterChain.doFilter(request, response);
         }
