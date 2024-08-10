@@ -154,8 +154,8 @@
 							<version>1.5.5.Final</version>
 						</path>
 					</annotationProcessorPaths>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>17</source>
+					<target>17</target>
 				</configuration>
 			</plugin>
 		</plugins>
