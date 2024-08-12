@@ -1,5 +1,5 @@
-Server:
-  port:8090
+server:
+  port: 8090
 servlet:
   context-path: /app
 spring:
@@ -7,14 +7,13 @@ spring:
     name: mc-friends
 
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.yaml
+    change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
-    drop-first: false
-    default-schema: mc-friends
+    drop-first: true
   datasource:
-    username: mc-friends
-    password: mc-friends
-    url: jdbc:postgresql://localhost:5435/mc-friends?stringtype=unspecified
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://localhost:5435/mc_friends?stringtype=unspecified
     driver-class-name: org.postgresql.Driver
     dialect: org.hibernate.dialect.PostgreSQL8Dialect
     hikari:

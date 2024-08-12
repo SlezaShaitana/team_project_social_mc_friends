@@ -1,0 +1,6 @@
+CREATE DATABASE mc_dialog;
+CREATE DATABASE mc_account;
+CREATE DATABASE mc_post;
+CREATE DATABASE mc_friends;
+CREATE DATABASE mc_auth;
+CREATE DATABASE mc_not
