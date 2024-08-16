@@ -11,6 +11,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -20,12 +22,22 @@ public class KafkaConsumer {
     @KafkaListener(topics = "registerTopic", groupId = "Userinfo")
     public void listenToRegisterTop(String message) throws JsonProcessingException {
         log.info("Received message: " + message);
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-        UUID userId = objectMapper.readValue(message, User.class).getUserId();
-        if(!userRepository.findById(userId).isPresent()){
-            User user = objectMapper.readValue(message, User.class);
-            userRepository.save(user);
+        User user = new User();
+        String regexId = "uuid=[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}";
+        String regexEmail = "/^[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/i";
+        user.setUserId(UUID.fromString(getExpression(message, regexId)));
+        user.setEmail(getExpression(message, regexEmail));
         }
+
+    private String getExpression(String text, String regex) {
+        String expression = "";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            expression = matcher.group(1);
+    }
+        return expression;
     }
 }
+
+

@@ -13,5 +13,5 @@ public class User {
     @Column(columnDefinition = "uuid", name = "user_id", nullable = false)
     private UUID userId;
     @Column(columnDefinition = "varchar(255)", name = "password", nullable = false)
-    private String password;
+    private String email;
 }
