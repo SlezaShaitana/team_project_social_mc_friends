@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-operations
+      id: create-operations-table
       author: Mariya
       changes:
         - createTable:
@@ -8,8 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: serial
-                  autoIncrement: true
+                  type: uuid
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -27,7 +26,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: operation_type
-                  type: uuid
+                  type: varchar(30)
                   constraints:
                     foreignKey: true
                     nullable: false

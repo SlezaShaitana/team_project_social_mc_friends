@@ -4,6 +4,7 @@ import com.social.mc_friends.dto.*;
 import com.social.mc_friends.exceptons.UserException;
 import com.social.mc_friends.mapper.Mapper;
 import com.social.mc_friends.model.Relationship;
+import com.social.mc_friends.security.JwtUtils;
 import com.social.mc_friends.service.impl.FriendServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class ApiController {
     private final FriendServiceImpl friendService;
     private final Mapper mapper;
+    private final JwtUtils jwtUtils;
     @PutMapping("/{id}/approve")
     public ResponseEntity<FriendShortDto> confirmFriendRequest(@PathVariable("id") String id){
         UUID uuid = UUID.fromString(id);

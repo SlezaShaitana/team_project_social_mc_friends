@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: change-relationship_status_change_id_type
-      author: Mariya
-      changes:
-        -  modifyDataType:
-             columnName: status_change_id
-             newDataType: uuid
-             tableName: relationship

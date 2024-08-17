@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-relationship-table
+      author: Mariya
+      changes:
+        - createTable:
+            tableName: relationship
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: related_user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: previous_status
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status_change_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rating
+                  type: integer
+                  constraints:
+                    nullable: false
+        - createIndex:
+            clustered: true
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: related_user_id
+            indexName: friend_index
+            tableName: relationship

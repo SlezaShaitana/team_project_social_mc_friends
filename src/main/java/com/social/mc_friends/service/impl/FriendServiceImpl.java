@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +27,7 @@ public class FriendServiceImpl implements FriendService {
     private final RelationshipRepository relationshipRepository;
     private final OperationRepository operationRepository;
     private final UserRepository userRepository;
-    public static UUID userId;
+   private UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
 
     @Override
     @Transactional
@@ -200,6 +202,15 @@ public class FriendServiceImpl implements FriendService {
     }
     private boolean UserExists(UUID userId){
         return !userRepository.findById(userId).isPresent();
+    }
+    private UUID getUserId(){
+        UserShortDto userShortDto = (UserShortDto) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return UUID.fromString(userShortDto.getUserId());
+//        String userString = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+//        int startIndex = userString.indexOf("userId=");
+//        int endIndex = userString.indexOf(",", startIndex);
+//        return UUID.fromString((userString.substring(startIndex + 7, endIndex)));
+
     }
 }
 

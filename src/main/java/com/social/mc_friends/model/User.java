@@ -1,6 +1,7 @@
 package com.social.mc_friends.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.UUID;
 @Entity
 @Data
 @Table(name = "users")
+@AllArgsConstructor
 public class User {
     @Id
     @Column(columnDefinition = "uuid", name = "user_id", nullable = false)

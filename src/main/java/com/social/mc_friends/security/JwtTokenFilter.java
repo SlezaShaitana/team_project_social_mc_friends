@@ -1,30 +1,24 @@
 package com.social.mc_friends.security;
 
 import com.social.mc_friends.dto.UserShortDto;
-import com.social.mc_friends.exceptons.UserException;
-import com.social.mc_friends.service.impl.FriendServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.UUID;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -34,6 +28,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+            try {
+
+
         String token = getToken(request);
         if (token !=null && jwtValidation.validateToken(token)) {
             UserShortDto userShortDto = jwtUtils.mapToUserShortDto(token);
@@ -45,9 +42,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     userShortDto.getEmail(), userShortDto.getUserId(), authorities);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            FriendServiceImpl.userId = UUID.fromString(userShortDto.getUserId());
         }
+        } catch (Exception e){
+                log.info("JWT token validation failed");
+            }
         filterChain.doFilter(request, response);
         }
     private String getToken(HttpServletRequest request) {
