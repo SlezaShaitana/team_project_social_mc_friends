@@ -9,13 +9,14 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
-    drop-first: true
+    drop-first: false
+
   datasource:
     username: postgres
     password: postgres
-    url: jdbc:postgresql://localhost:5435/mc_friends?stringtype=unspecified
+    url: jdbc:postgresql://postgres_db/mc_friends
     driver-class-name: org.postgresql.Driver
-    dialect: org.hibernate.dialect.PostgreSQL8Dialect
+    dialect: org.hibernate.dialect.PostgreSQLDialect
     hikari:
       connection-init-sql: create schema if not exists account
       connection-timeout: 10000
@@ -27,16 +28,17 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
+
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: 79.174.80.200:9092
     kafkaMessageTopic: "registerTopic"
     kafkaMessageGroupId: "Userinfo"
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8888/eureka/
-      register-with-eureka: true
-      fetch-registry: true
-    instance:
-      hostname: localhost
+      defaultZone: http://mc-eureka-conteiner:8888/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    hostname: localhost
