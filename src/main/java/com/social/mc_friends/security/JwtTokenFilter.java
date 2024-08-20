@@ -17,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 @Slf4j
 @Component
@@ -28,21 +29,26 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-            try {
+        try {
 
+            String token = getToken(request);
+            if (token !=null && jwtValidation.validateToken(token)) {
 
-        String token = getToken(request);
-        if (token !=null && jwtValidation.validateToken(token)) {
-            UserShortDto userShortDto = jwtUtils.mapToUserShortDto(token);
-            Collection<? extends GrantedAuthority> authorities = userShortDto.getRoles().stream()
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
+                String email = jwtUtils.getEmail(token);
+                List<String> roles = jwtUtils.getRoles(token);
 
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    userShortDto.getEmail(), userShortDto.getUserId(), authorities);
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
+                Collection<? extends GrantedAuthority> authorities = roles.stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        email, null, authorities
+                );
+
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         } catch (Exception e){
                 log.info("JWT token validation failed");
             }
