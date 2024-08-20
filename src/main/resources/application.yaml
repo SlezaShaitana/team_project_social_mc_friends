@@ -14,7 +14,7 @@ spring:
   datasource:
     username: postgres
     password: postgres
-    url: jdbc:postgresql://postres_db/mc_friends
+    url: jdbc:postgresql://postgres_db/mc_friends
     driver-class-name: org.postgresql.Driver
     dialect: org.hibernate.dialect.PostgreSQLDialect
     hikari:
