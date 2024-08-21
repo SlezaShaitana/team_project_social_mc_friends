@@ -23,18 +23,11 @@ public class SecurityConfig {
 
     final private JwtTokenFilter jwtTokenFilter;
     final private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new InMemoryUserDetailsManager();
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/v1/friends/**")
-                                .hasAnyRole("USER")
-                                .anyRequest()
-                                .authenticated()
+                        auth.anyRequest().authenticated()
                 )
                 .exceptionHandling(configurer -> configurer.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .csrf(AbstractHttpConfigurer::disable)

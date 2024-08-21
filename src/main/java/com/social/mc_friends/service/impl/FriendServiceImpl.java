@@ -6,6 +6,7 @@ import com.social.mc_friends.exceptons.UserException;
 import com.social.mc_friends.model.*;
 import com.social.mc_friends.repository.*;
 import com.social.mc_friends.repository.specificftions.FriendsSpecifications;
+import com.social.mc_friends.security.JwtUtils;
 import com.social.mc_friends.service.FriendService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +30,13 @@ public class FriendServiceImpl implements FriendService {
     private final RelationshipRepository relationshipRepository;
     private final OperationRepository operationRepository;
     private final UserRepository userRepository;
+    private final JwtUtils jwtUtils;
 
     @Override
     @Transactional
     public Relationship confirmFriendRequest(String token, UUID relatedUserId) throws UserException{
             log.info("confirmFriendRequest execution started");
-            UUID userId = UUID.fromString(getToken(token));
+            UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
             Operation operation = createOperation(userId, relatedUserId, OperationType.FRIENDSHIP_CONFIRMATION);
             Relationship relationship = makeRelationship(userId,  relatedUserId, StatusCode.FRIEND, operation);
             saveReverseRelationship(relatedUserId, userId, StatusCode.FRIEND, operation);
@@ -44,7 +46,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public Relationship unblockFriend(String token, UUID relatedUserId) throws UserException {
             log.info("unblockFriend execution started");
-        UUID userId = UUID.fromString(getToken(token));
+        UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
             Operation operation = createOperation(userId, relatedUserId, OperationType.UNBLOCKING);
             return makeRelationship(userId, relatedUserId, StatusCode.FRIEND, operation);
     }
@@ -52,7 +54,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public Relationship blockFriend(String token, UUID relatedUserId) throws UserException {
         log.info("blockFriend execution started");
-        UUID userId = UUID.fromString(getToken(token));
+        UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
             Operation operation = createOperation(userId, relatedUserId, OperationType.BLOCKING);
             return makeRelationship(userId, relatedUserId, StatusCode.BLOCKED, operation);
     }
@@ -60,7 +62,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public Relationship createFriendRequest(String token, UUID relatedUserId) throws UserException {
         log.info("createFriendRequest execution started");
-        UUID userId = UUID.fromString(getToken(token));
+        UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         Operation operation = createOperation(userId, relatedUserId, OperationType.FRIEND_REQUEST);
         Relationship relationship = makeRelationship(userId, relatedUserId, StatusCode.REQUEST_TO, operation);
         saveReverseRelationship(relatedUserId, userId, StatusCode.REQUEST_FROM, operation);
@@ -70,7 +72,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public Relationship subscribeToFriend(String token, UUID relatedUserId) throws UserException {
         log.info("subscribeToFriend execution started");
-        UUID userId = UUID.fromString(getToken(token));
+        UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         Operation operation = createOperation(userId, relatedUserId, OperationType.SUBSCRIPTION);
         Relationship relationship = makeRelationship(userId, relatedUserId, StatusCode.SUBSCRIBED, operation);
         saveReverseRelationship(relatedUserId, userId, StatusCode.WATCHING, operation);
@@ -80,7 +82,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public Page<Relationship> getFriendList(String token, FriendSearchDto searchDto, Integer page) {
         log.info("getFriendList execution started");
-        UUID userId = UUID.fromString(getToken(token));
+        UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         Specification<Relationship> spec = Specification.where(null);
         if (searchDto.getId() != null){
             spec = spec.and(FriendsSpecifications.operationIdEquals(UUID.fromString(searchDto.getId())));
@@ -106,14 +108,14 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public Relationship getFriendshipNote(String token, UUID relatedUserId) {
         log.info("getFriendshipNote execution started");
-        UUID userId = UUID.fromString(getToken(token));
+        UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         return relationshipRepository.findByUserIdAndRelatedUserId(userId, relatedUserId);
     }
 
     @Override
     public void deleteFriend(String token, UUID relatedUserId) {
         log.info("deleteFriend execution started");
-        UUID userId = UUID.fromString(getToken(token));
+        UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         Operation operation = createOperation(userId, relatedUserId, OperationType.REMOVAL);
         Relationship relationship = relationshipRepository.findByUserIdAndRelatedUserId(userId, relatedUserId);
         StatusCode previousStatusCode = relationship.getStatusCode();
@@ -126,14 +128,14 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public List<UUID> getUserIdList(String token, String status) {
         log.info("getUserIdList execution started");
-        UUID userId = UUID.fromString(getToken(token));
+        UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         return relationshipRepository.findByStatus(status);
     }
 
     @Override
     public List<UUID> getAllFriendsIdList(String token) {//Для текущего пользователя
         log.info("getAllFriendsIdList execution started");
-        UUID userId = UUID.fromString(getToken(token));
+        UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         return relationshipRepository.findAllFriendsId(userId);
     }
 
@@ -146,7 +148,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public Integer getFriendRequestCount(String token) {
         log.info("getFriendRequestCount execution started");
-        UUID userId = UUID.fromString(getToken(token));
+        UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
        List<Relationship> relationshipList = relationshipRepository.findByUserIdAndStatusCode(userId);
         return relationshipList.size();
     }
@@ -159,7 +161,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public List<UUID> getFriendsWhoBlockedUser(String token) {
         log.info("getFriendsWhoBlockedUser execution started");
-        UUID userId = UUID.fromString(getToken(token));
+        UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         return relationshipRepository.findBlockingFriendsId(userId);
     }
     @Override
