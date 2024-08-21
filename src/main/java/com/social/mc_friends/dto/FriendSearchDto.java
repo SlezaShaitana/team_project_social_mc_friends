@@ -7,11 +7,11 @@ import lombok.Setter;
 
 @Data
 public class FriendSearchDto {
-private String id;
-private boolean isDeleted;
-private String idFrom;
-private String statusCode;
-private String idTo;
-private String previousStatusCode;
+    private String id;
+    private boolean isDeleted;
+    private String idFrom;
+    private String statusCode;
+    private String idTo;
+    private String previousStatusCode;
 
 }

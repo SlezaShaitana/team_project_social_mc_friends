@@ -25,7 +25,6 @@ public class ApiController {
 
     private final FriendServiceImpl friendService;
     private final Mapper mapper;
-    private final JwtUtils jwtUtils;
 
     @PutMapping("/{id}/approve")
     public ResponseEntity<FriendShortDto> confirmFriendRequest(@RequestHeader("Authorization") String headerAuth,
@@ -81,7 +80,7 @@ public class ApiController {
     }
     @GetMapping
     public Page<FriendShortDto> getFriendList(@RequestHeader("Authorization") String headerAuth,
-                                              @RequestBody FriendSearchDto searchDto,
+                                              @RequestBody(required = false) FriendSearchDto searchDto,
                               @RequestParam(name = "p", defaultValue = "1") Integer page ){
         if (page < 1){
             page = 1;
@@ -129,7 +128,7 @@ public class ApiController {
         return ResponseEntity.ok(friendService.getFriendsWhoBlockedUser(headerAuth));
     }
     @GetMapping("/recommendations")
-    public ResponseEntity<List<FriendShortDto>> getRecommendations(@RequestBody FriendSearchDto searchDto){
+    public ResponseEntity<List<FriendShortDto>> getRecommendations(@RequestBody(required = false) FriendSearchDto searchDto){
         return ResponseEntity.ok(friendService.getRecommendations(searchDto).stream()
                 .map(mapper::mapToFriendShortDto)
                 .collect(Collectors.toList()));

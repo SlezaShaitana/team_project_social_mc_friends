@@ -13,12 +13,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -82,6 +84,9 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public Page<Relationship> getFriendList(String token, FriendSearchDto searchDto, Integer page) {
         log.info("getFriendList execution started");
+        if (searchDto == null) {
+            return new PageImpl<>(new ArrayList<>());
+        }
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         Specification<Relationship> spec = Specification.where(null);
         if (searchDto.getId() != null){
@@ -167,7 +172,8 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public List<Relationship> getRecommendations(FriendSearchDto searchDto) {
         log.info("getRecommendations execution started");
-        return relationshipRepository.findAllFriends(UUID.fromString(searchDto.getIdTo()));
+        return new ArrayList<>();
+        //return relationshipRepository.findAllFriends(UUID.fromString(searchDto.getIdTo()));
     }
 
     private Operation createOperation(UUID userId, UUID relatedUserId, OperationType operationType){
