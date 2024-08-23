@@ -191,8 +191,9 @@ public class FriendServiceImpl implements FriendService {
         return operation;
     }
     private Relationship makeRelationship(UUID userId, UUID relatedUserId, StatusCode  statusCode, Operation operation) throws UserException {
-        log.info("makeRelationship execution started");
-        if(UserExists(userId) || UserExists(relatedUserId)){
+        log.info("makeRelationship execution started. UserId: " + userId + " relatedUserId: " + relatedUserId);
+        if(!UserExists(userId) || !UserExists(relatedUserId)){
+            log.info("UserId or relatedUserId does not exist");
             throw new UserException("User with ID " + userId + " or user with ID " + relatedUserId + " does not exist");
         }
         Relationship relationship = relationshipRepository.findByUserIdAndRelatedUserId(userId, relatedUserId);
@@ -211,7 +212,7 @@ public class FriendServiceImpl implements FriendService {
 
     private void saveReverseRelationship(UUID relatedUserId, UUID userId, StatusCode  statusCode, Operation operation) throws UserException {
         log.info("saveReverseRelationship execution started");
-        if(UserExists(userId) || UserExists(relatedUserId)){
+        if(!UserExists(userId) || !UserExists(relatedUserId)){
             throw new UserException("User with ID " + userId + " or user with ID " + relatedUserId + " does not exist");
         }
         Relationship reverseRelationship = relationshipRepository.findByUserIdAndRelatedUserId(relatedUserId, userId);
@@ -227,7 +228,8 @@ public class FriendServiceImpl implements FriendService {
         relationshipRepository.save(reverseRelationship);
     }
     private boolean UserExists(UUID userId){
-        return !userRepository.findById(userId).isPresent();
+        return userRepository.findById(userId).isPresent();
+
     }
     private UUID getUserIdTest(){
         UserShortDto userShortDto = (UserShortDto) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
