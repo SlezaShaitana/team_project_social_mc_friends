@@ -228,7 +228,7 @@ public class FriendServiceImpl implements FriendService {
         relationshipRepository.save(reverseRelationship);
     }
     private boolean UserExists(UUID userId){
-        return userRepository.findById(userId).isPresent();
+        return userRepository.findByUserId(userId) != null;
 
     }
     private UUID getUserIdTest(){
