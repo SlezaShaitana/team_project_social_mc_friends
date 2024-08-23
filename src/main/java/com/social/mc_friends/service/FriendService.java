@@ -28,7 +28,8 @@ public interface FriendService {
 
     List<UUID> getUserIdList(String token, String status);
 
-    List<Relationship> getRecommendations(FriendSearchDto searchDto);
+//    List<Relationship> getRecommendations(FriendSearchDto searchDto);
+    List<User> getRecommendations(FriendSearchDto searchDto);
 
     List<UUID> getAllFriendsIdList(String token);
 

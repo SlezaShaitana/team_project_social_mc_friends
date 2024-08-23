@@ -169,11 +169,16 @@ public class FriendServiceImpl implements FriendService {
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         return relationshipRepository.findBlockingFriendsId(userId);
     }
+//    @Override
+//    public List<Relationship> getRecommendations(FriendSearchDto searchDto) {
+//        log.info("getRecommendations execution started");
+//        return new ArrayList<>();
+//        //return relationshipRepository.findAllFriends(UUID.fromString(searchDto.getIdTo()));
+//    }
     @Override
-    public List<Relationship> getRecommendations(FriendSearchDto searchDto) {
+    public List<User> getRecommendations(FriendSearchDto searchDto) {
         log.info("getRecommendations execution started");
-        return new ArrayList<>();
-        //return relationshipRepository.findAllFriends(UUID.fromString(searchDto.getIdTo()));
+        return userRepository.findAll();
     }
 
     private Operation createOperation(UUID userId, UUID relatedUserId, OperationType operationType){
