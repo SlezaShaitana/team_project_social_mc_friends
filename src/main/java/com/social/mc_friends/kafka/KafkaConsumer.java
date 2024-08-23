@@ -19,22 +19,25 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class KafkaConsumer {
+
     private final UserRepository userRepository;
+
     @KafkaListener(topics = "registerTopic", groupId =  "${spring.kafka.kafkaMessageGroupId}", containerFactory = "kafkaMessageConcurrentKafkaListenerContainerFactory")
     public void listenToRegisterTop(RegistrationDto registrationDto) throws JsonProcessingException {
         log.info("Received message: " + registrationDto);
         try {
             UUID userId = registrationDto.getUuid();
-            if (!userRepository.findById(userId).isPresent()){
+            if (userRepository.findById(userId).isEmpty()){
                 User user = new User(registrationDto.getUuid(), registrationDto.getEmail());
                 userRepository.save(user);
             }
         } catch (Exception e){
+            log.error(e.getMessage());
             log.error("Failed to  create user from Kafka message");
         }
 
 
-        }
+    }
 
 
 }
