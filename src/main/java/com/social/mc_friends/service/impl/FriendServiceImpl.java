@@ -3,6 +3,7 @@ package com.social.mc_friends.service.impl;
 
 import com.social.mc_friends.dto.*;
 import com.social.mc_friends.exceptons.UserException;
+import com.social.mc_friends.kafka.KafkaProducer;
 import com.social.mc_friends.model.*;
 import com.social.mc_friends.repository.*;
 import com.social.mc_friends.repository.specificftions.FriendsSpecifications;
@@ -33,6 +34,7 @@ public class FriendServiceImpl implements FriendService {
     private final OperationRepository operationRepository;
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
+    private final KafkaProducer kafkaProducer;
 
     @Override
     @Transactional
@@ -42,6 +44,7 @@ public class FriendServiceImpl implements FriendService {
             Operation operation = createOperation(userId, relatedUserId, OperationType.FRIENDSHIP_CONFIRMATION);
             Relationship relationship = makeRelationship(userId,  relatedUserId, StatusCode.FRIEND, operation);
             saveReverseRelationship(relatedUserId, userId, StatusCode.FRIEND, operation);
+            kafkaProducer.sendMessageForFriendConformation(new MessageForKafkaDto(userId, relatedUserId));
             return relationship;
     }
 
@@ -68,6 +71,7 @@ public class FriendServiceImpl implements FriendService {
         Operation operation = createOperation(userId, relatedUserId, OperationType.FRIEND_REQUEST);
         Relationship relationship = makeRelationship(userId, relatedUserId, StatusCode.REQUEST_TO, operation);
         saveReverseRelationship(relatedUserId, userId, StatusCode.REQUEST_FROM, operation);
+        kafkaProducer.sendMessageForFriendRequest(new MessageForKafkaDto(userId, relatedUserId));
         return relationship;
     }
 
