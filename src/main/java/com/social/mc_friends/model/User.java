@@ -21,6 +21,6 @@ public class User {
     private String email;
     @Column(columnDefinition = "varchar(255)", name = "first_name", nullable = true)
     private String firstName;
-    @Column(columnDefinition = "varchar(255)", name = "first_name", nullable = true)
+    @Column(columnDefinition = "varchar(255)", name = "last_name", nullable = true)
     private String lastName;
 }
