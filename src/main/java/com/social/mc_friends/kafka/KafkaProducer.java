@@ -1,6 +1,5 @@
 package com.social.mc_friends.kafka;
 
-import com.social.mc_friends.dto.MessageForKafkaDto;
 import com.social.mc_friends.dto.NotificationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
