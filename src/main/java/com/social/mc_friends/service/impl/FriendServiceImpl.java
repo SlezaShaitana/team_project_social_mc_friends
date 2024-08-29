@@ -267,6 +267,8 @@ public class FriendServiceImpl implements FriendService {
         notificationDto.setReceiverId(relatedUserId);
         notificationDto.setServiceName(MicroServiceName.FRIENDS);
         notificationDto.setEventId(operation.getUuid());
+        notificationDto.setUuid(null);
+        notificationDto.setIsReaded(null);
         return notificationDto;
     }
 }
