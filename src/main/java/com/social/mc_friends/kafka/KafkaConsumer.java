@@ -28,7 +28,7 @@ public class KafkaConsumer {
         try {
             UUID userId = registrationDto.getUuid();
             if (userRepository.findById(userId).isEmpty()){
-                User user = new User(registrationDto.getUuid(), registrationDto.getEmail());
+                User user = new User(registrationDto.getUuid(), registrationDto.getEmail(), registrationDto.getFirstName(), registrationDto.getLastName());
                 userRepository.save(user);
             }
         } catch (Exception e){

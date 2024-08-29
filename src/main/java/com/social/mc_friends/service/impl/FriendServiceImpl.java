@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -41,10 +42,14 @@ public class FriendServiceImpl implements FriendService {
     public Relationship confirmFriendRequest(String token, UUID relatedUserId) throws UserException{
             log.info("confirmFriendRequest execution started");
             UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
+            User user = userRepository.findByUserId(userId);
             Operation operation = createOperation(userId, relatedUserId, OperationType.FRIENDSHIP_CONFIRMATION);
             Relationship relationship = makeRelationship(userId,  relatedUserId, StatusCode.FRIEND, operation);
             saveReverseRelationship(relatedUserId, userId, StatusCode.FRIEND, operation);
-            kafkaProducer.sendMessageForFriendConformation(new MessageForKafkaDto(userId, relatedUserId));
+            NotificationDto notificationDto = makeNotificationDto(userId, relatedUserId, operation);
+            notificationDto.setNotificationType(NotificationType.FRIEND_REQUEST_CONFIRMATION);
+            notificationDto.setContent("Пользователь " + user.getFirstName() + user.getLastName() + " добавил Вас в друзья");
+            kafkaProducer.sendNotificationMessage(notificationDto);
             return relationship;
     }
 
@@ -68,10 +73,14 @@ public class FriendServiceImpl implements FriendService {
     public Relationship createFriendRequest(String token, UUID relatedUserId) throws UserException {
         log.info("createFriendRequest execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
+        User user = userRepository.findByUserId(userId);
         Operation operation = createOperation(userId, relatedUserId, OperationType.FRIEND_REQUEST);
         Relationship relationship = makeRelationship(userId, relatedUserId, StatusCode.REQUEST_TO, operation);
         saveReverseRelationship(relatedUserId, userId, StatusCode.REQUEST_FROM, operation);
-        kafkaProducer.sendMessageForFriendRequest(new MessageForKafkaDto(userId, relatedUserId));
+        NotificationDto notificationDto = makeNotificationDto(userId, relatedUserId, operation);
+        notificationDto.setNotificationType(NotificationType.FRIEND_REQUEST);
+        notificationDto.setContent("Пользователь " + user.getFirstName() + " " + user.getLastName() + " отправил Вам запрос на добавление в друзья");
+        kafkaProducer.sendNotificationMessage(notificationDto);
         return relationship;
     }
 
@@ -250,6 +259,15 @@ public class FriendServiceImpl implements FriendService {
             return headerAuth.substring(7);
         }
         throw new IllegalArgumentException("No Bearer token found");
+    }
+    private NotificationDto makeNotificationDto(UUID userId, UUID relatedUserId, Operation operation){
+        NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setAuthorId(userId);
+        notificationDto.setSentTime(LocalDateTime.now());
+        notificationDto.setReceiverId(relatedUserId);
+        notificationDto.setServiceName(MicroServiceName.FRIENDS);
+        notificationDto.setEventId(operation.getUuid());
+        return notificationDto;
     }
 }
 

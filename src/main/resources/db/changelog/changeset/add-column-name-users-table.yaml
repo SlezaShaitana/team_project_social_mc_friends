@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: addColumn-firstName-lastName
+      author: Mariya
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: first_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: last_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: true

@@ -19,4 +19,8 @@ public class User {
     private UUID userId;
     @Column(columnDefinition = "varchar(255)", name = "password", nullable = false)
     private String email;
+    @Column(columnDefinition = "varchar(255)", name = "first_name", nullable = true)
+    private String firstName;
+    @Column(columnDefinition = "varchar(255)", name = "first_name", nullable = true)
+    private String lastName;
 }
