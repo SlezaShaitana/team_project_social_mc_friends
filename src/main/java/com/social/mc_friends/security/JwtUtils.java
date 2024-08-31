@@ -37,7 +37,7 @@ public class JwtUtils {
 
     public List<String> getRoles(String token){
         return Jwts.parser().verifyWith(createSecretKey(secret)).build()
-                .parseSignedClaims(token).getPayload().get("roles", List.class);
+                .parseSignedClaims(token).getPayload().get("role", List.class);
 
     }
 
