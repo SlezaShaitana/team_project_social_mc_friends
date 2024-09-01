@@ -95,31 +95,34 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Page<Relationship> getFriendList(String token, String id, String isDeleted, String idFrom,
-                                            String statusCode, String idTo, String previousStatusCode, Integer page, Integer size) {
+    public Page<Relationship> getFriendList(String token, FriendSearchDto searchDto, Integer page) {
         log.info("getFriendList execution started");
+        if (searchDto == null) {
+            return new PageImpl<>(new ArrayList<>());
+        }
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         Specification<Relationship> spec = Specification.where(null);
-        if (id != null){
-            spec = spec.and(FriendsSpecifications.operationIdEquals(UUID.fromString(id)));
+        if (searchDto.getId() != null){
+            spec = spec.and(FriendsSpecifications.operationIdEquals(UUID.fromString(searchDto.getId())));
         }
-        if (isDeleted != null) {
+        if (searchDto.isDeleted()) {
             spec = spec.and(FriendsSpecifications.friendIsDelete(String.valueOf(StatusCode.NONE)));
         }
-        if (idFrom != null){
-            spec = spec.and(FriendsSpecifications.friendIdFromEquals(UUID.fromString(idFrom)));
+        if (searchDto.getIdFrom() != null){
+            spec = spec.and(FriendsSpecifications.friendIdFromEquals(UUID.fromString(searchDto.getIdFrom())));
         }
-        if (idTo != null){
-            spec = spec.and(FriendsSpecifications.friendIdToEquals(UUID.fromString(idTo)));
+        if (searchDto.getIdTo() != null){
+            spec = spec.and(FriendsSpecifications.friendIdToEquals(UUID.fromString(searchDto.getIdTo())));
         }
-        if (statusCode != null){
-            spec = spec.and(FriendsSpecifications.friendsStatusEquals(StatusCode.valueOf(statusCode)));
+        if (searchDto.getStatusCode() != null){
+            spec = spec.and(FriendsSpecifications.friendsStatusEquals(StatusCode.valueOf(searchDto.getStatusCode())));
         }
-        if (previousStatusCode != null){
-            spec = spec.and(FriendsSpecifications.friendsPreviousStatusEquals(StatusCode.valueOf(previousStatusCode)));
+        if (searchDto.getPreviousStatusCode() != null){
+            spec = spec.and(FriendsSpecifications.friendsPreviousStatusEquals(StatusCode.valueOf(searchDto.getStatusCode())));
         }
-       return relationshipRepository.findAll(spec, PageRequest.of(page - 1, size));
+        return relationshipRepository.findAll(spec, PageRequest.of(page - 1, 3));
     }
+
 
     @Override
     public Relationship getFriendshipNote(String token, UUID relatedUserId) {
