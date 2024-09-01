@@ -20,8 +20,7 @@ public interface FriendService {
 
     Relationship subscribeToFriend(String token, UUID uuid) throws UserException;
 
-    Page<Relationship> getFriendList(String token, String id, String isDeleted, String idFrom,
-                                     String statusCode, String idTo, String previousStatusCode, Integer page, Integer size);
+    Page<Relationship> getFriendList(String token, FriendSearchDto searchDto, Integer page);
 
     Relationship getFriendshipNote(String token, UUID uuid);
 
