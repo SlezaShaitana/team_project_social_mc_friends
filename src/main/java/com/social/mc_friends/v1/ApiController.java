@@ -80,12 +80,18 @@ public class ApiController {
     }
     @GetMapping
     public Page<FriendShortDto> getFriendList(@RequestHeader("Authorization") String headerAuth,
-                                              @RequestBody(required = false) FriendSearchDto searchDto,
+                                              @RequestParam(required = false) String id,
+                                              @RequestParam(required = false) String isDeleted,
+                                              @RequestParam(required = false) String idFrom,
+                                              @RequestParam(required = false) String statusCode,
+                                              @RequestParam(required = false) String idTo,
+                                              @RequestParam(required = false) String previousStatusCode,
+                                              @RequestParam(required = false) Integer size,
                                               @RequestParam(name = "p", defaultValue = "1") Integer page ){
         if (page < 1){
             page = 1;
         }
-        return friendService.getFriendList(headerAuth, searchDto, page).map(FriendShortDto::new);
+        return friendService.getFriendList(headerAuth, id, isDeleted, idFrom, statusCode, idTo, previousStatusCode, page, size).map(FriendShortDto::new);
 
     }
     @GetMapping("/{id}")
