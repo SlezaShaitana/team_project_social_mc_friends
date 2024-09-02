@@ -17,13 +17,19 @@ public class FriendsSpecifications {
     public static Specification<Relationship> friendIdFromEquals(UUID uuid){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("userId"), uuid));
     }
-    public static Specification<Relationship> friendsStatusEquals(StatusCode status){
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("statusCode"), String.format("%%%s%%", status)));
+//    public static Specification<Relationship> friendsStatusEquals(StatusCode status){
+//        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("statusCode"), String.format("%%%s%%", status)));
+//    }
+public static Specification<Relationship> friendsStatusEquals(StatusCode status){
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("statusCode"), status));
     }
     public static Specification<Relationship> friendIdToEquals(UUID uuid){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("relatedUserId"), uuid));
     }
+//    public static Specification<Relationship> friendsPreviousStatusEquals(StatusCode previousStatus){
+//        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("previousStatusCod"), String.format("%%%s%%", previousStatus)));
+//    }
     public static Specification<Relationship> friendsPreviousStatusEquals(StatusCode previousStatus){
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("previousStatusCod"), String.format("%%%s%%", previousStatus)));
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("previousStatusCod"), previousStatus));
     }
 }

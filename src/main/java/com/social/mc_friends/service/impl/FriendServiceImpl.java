@@ -116,6 +116,7 @@ public class FriendServiceImpl implements FriendService {
         if (statusCode != null){
             spec = spec.and(FriendsSpecifications.friendsStatusEquals(StatusCode.valueOf(statusCode)));
         }
+
         if (previousStatusCode != null){
             spec = spec.and(FriendsSpecifications.friendsPreviousStatusEquals(StatusCode.valueOf(previousStatusCode)));
         }
