@@ -80,13 +80,13 @@ public class ApiController {
     }
     @GetMapping
     public Page<FriendShortDto> getFriendList(@RequestHeader("Authorization") String headerAuth,
-                                              @RequestParam(required = false) String id,
-                                              @RequestParam(required = false) String isDeleted,
-                                              @RequestParam(required = false) String idFrom,
-                                              @RequestParam(required = false) String statusCode,
-                                              @RequestParam(required = false) String idTo,
-                                              @RequestParam(required = false) String previousStatusCode,
-                                              @RequestParam(required = false) Integer size,
+                                              @RequestParam(name = "id", required = false) String id,
+                                              @RequestParam(name = "isDeleted", required = false) String isDeleted,
+                                              @RequestParam(name = "idFrom", required = false) String idFrom,
+                                              @RequestParam(name = "statusCode", required = false) String statusCode,
+                                              @RequestParam(name = "idTo", required = false) String idTo,
+                                              @RequestParam(name = "previousStatusCode", required = false) String previousStatusCode,
+                                              @RequestParam(name = "size", required = false) Integer size,
                                               @RequestParam(name = "p", defaultValue = "1") Integer page ){
         if (page < 1){
             page = 1;
