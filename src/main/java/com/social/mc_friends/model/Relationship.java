@@ -20,8 +20,10 @@ public class Relationship {
     @Column(columnDefinition = "uuid", name = "related_user_id",nullable = false)
     private UUID relatedUserId;
     @Column(name = "status", columnDefinition = "varchar(20)", nullable = false)
+    @Enumerated(EnumType.STRING)
     private StatusCode statusCode;
     @Column(name = "previous_status", columnDefinition = "varchar(20)", nullable = false)
+    @Enumerated(EnumType.STRING)
     private StatusCode previousStatusCode;
     @Column(columnDefinition = "uuid", name = "status_change_id",nullable = false)
     private UUID statusChangeId;

@@ -20,18 +20,18 @@ public interface RelationshipRepository extends JpaRepository<Relationship, UUID
     @Query(nativeQuery = true, value = "SELECT user_id FROM relationship  WHERE status LIKE %:status%")
     List<UUID> findByStatus(@Param("status") String status);
     @Modifying
-    @Query(nativeQuery = true, value = "SELECT related_user_id FROM relationship  WHERE user_id = :user_id AND status = '0'")
+    @Query(nativeQuery = true, value = "SELECT related_user_id FROM relationship  WHERE user_id = :user_id AND status LIKE %FRIEND%")
     List<UUID> findAllFriendsId(@Param("user_id") UUID userId);
 
     @Modifying
-    @Query(nativeQuery = true, value = "SELECT * FROM relationship  WHERE user_id = :user_id AND status = '2'")
+    @Query(nativeQuery = true, value = "SELECT * FROM relationship  WHERE user_id = :user_id AND status LIKE %REQUEST_FROM%")
     List<Relationship> findByUserIdAndStatusCode(@Param("user_id") UUID userId);
     @Modifying
-    @Query(nativeQuery = true, value = "SELECT user_id FROM relationship  WHERE related_user_id = :related_user_id AND status = '3'")
+    @Query(nativeQuery = true, value = "SELECT user_id FROM relationship  WHERE related_user_id = :related_user_id AND LIKE %BLOCKED%")
     List<UUID> findBlockingFriendsId(@Param("related_user_id") UUID userId);
 
     @Modifying
-    @Query(nativeQuery = true, value = "SELECT * FROM relationship  WHERE user_id = :user_id AND status = '0'")
+    @Query(nativeQuery = true, value = "SELECT * FROM relationship  WHERE user_id = :user_id AND status LIKE %FRIEND%")
     List<Relationship> findAllFriends(@Param("user_id") UUID userId);
 
 
