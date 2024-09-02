@@ -1,0 +1,7 @@
+databaseChangeLog:
+  -  changeSet:
+       id: delete-relationship
+       author: Mariya
+       changes:
+         - delete:
+            tableName: relationship
