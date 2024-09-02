@@ -104,9 +104,9 @@ public class FriendServiceImpl implements FriendService {
         if (id != null){
             spec = spec.and(FriendsSpecifications.operationIdEquals(UUID.fromString(id)));
         }
-        if (isDeleted != null) {
-            spec = spec.and(FriendsSpecifications.friendIsDelete(String.valueOf(StatusCode.NONE)));
-        }
+//        if (isDeleted != null) {
+//            spec = spec.and(FriendsSpecifications.friendIsDelete(String.valueOf(StatusCode.NONE)));
+//        }
         if (idFrom != null){
             spec = spec.and(FriendsSpecifications.friendIdFromEquals(UUID.fromString(idFrom)));
         }

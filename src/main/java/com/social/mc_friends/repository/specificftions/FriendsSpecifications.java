@@ -20,7 +20,7 @@ public class FriendsSpecifications {
 //    public static Specification<Relationship> friendsStatusEquals(StatusCode status){
 //        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("statusCode"), String.format("%%%s%%", status)));
 //    }
-public static Specification<Relationship> friendsStatusEquals(String status){
+public static Specification<Relationship> friendsStatusEquals(StatusCode status){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("statusCode"), status));
     }
     public static Specification<Relationship> friendIdToEquals(UUID uuid){
