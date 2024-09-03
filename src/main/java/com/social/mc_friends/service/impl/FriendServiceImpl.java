@@ -96,20 +96,19 @@ public class FriendServiceImpl implements FriendService {
 
 
     @Override
-    public Page<Relationship> getFriendList(String token, String id, String isDeleted, String idFrom,
+    public Page<Relationship> getFriendList(String token, String id, String isDeleted,
                                             String statusCode, String idTo, String previousStatusCode, Integer page, Integer size) {
         log.info("getFriendList execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         Specification<Relationship> spec = Specification.where(null);
+        spec = spec.and(FriendsSpecifications.userIdEquals(userId));
         if (id != null){
             spec = spec.and(FriendsSpecifications.operationIdEquals(UUID.fromString(id)));
         }
 //        if (isDeleted != null) {
 //            spec = spec.and(FriendsSpecifications.friendIsDelete(String.valueOf(StatusCode.NONE)));
 //        }
-        if (idFrom != null){
-            spec = spec.and(FriendsSpecifications.friendIdFromEquals(UUID.fromString(idFrom)));
-        }
+
         if (idTo != null){
             spec = spec.and(FriendsSpecifications.friendIdToEquals(UUID.fromString(idTo)));
         }

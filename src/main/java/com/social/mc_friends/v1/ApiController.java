@@ -82,7 +82,6 @@ public class ApiController {
     public Page<FriendShortDto> getFriendList(@RequestHeader("Authorization") String headerAuth,
                                               @RequestParam(name = "id", required = false) String id,
                                               @RequestParam(name = "isDeleted", required = false) String isDeleted,
-                                              @RequestParam(name = "idFrom", required = false) String idFrom,
                                               @RequestParam(name = "statusCode", required = false) String statusCode,
                                               @RequestParam(name = "idTo", required = false) String idTo,
                                               @RequestParam(name = "previousStatusCode", required = false) String previousStatusCode,
@@ -91,7 +90,7 @@ public class ApiController {
         if (page < 1){
             page = 1;
         }
-        return friendService.getFriendList(headerAuth, id, isDeleted, idFrom, statusCode, idTo, previousStatusCode, page, size).map(FriendShortDto::new);
+        return friendService.getFriendList(headerAuth, id, isDeleted, statusCode, idTo, previousStatusCode, page, size).map(FriendShortDto::new);
 
     }
     @GetMapping("/{id}")

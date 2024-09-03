@@ -14,7 +14,8 @@ public class FriendsSpecifications {
 //    public static Specification<Relationship> friendIsDelete(String status){
 //        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("statusCode"), String.format("%%%s%%", status)));
 //    }
-    public static Specification<Relationship> friendIdFromEquals(UUID uuid){
+
+    public static Specification<Relationship> userIdEquals(UUID uuid){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("userId"), uuid));
     }
 //    public static Specification<Relationship> friendsStatusEquals(StatusCode status){
