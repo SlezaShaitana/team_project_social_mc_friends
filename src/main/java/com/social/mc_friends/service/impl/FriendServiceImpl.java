@@ -198,6 +198,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public List<User> getRecommendations(FriendSearchDto searchDto) {
         log.info("getRecommendations execution started");
+        log.info("Check for update");
         return userRepository.findAll();
     }
 
