@@ -58,7 +58,19 @@ public class FriendServiceImpl implements FriendService {
             log.info("unblockFriend execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
             Operation operation = createOperation(userId, relatedUserId, OperationType.UNBLOCKING);
-            return makeRelationship(userId, relatedUserId, StatusCode.FRIEND, operation);
+            Relationship relationship = relationshipRepository.findByUserIdAndRelatedUserId(userId, relatedUserId);
+            StatusCode statusCode = relationship.getPreviousStatusCode();
+            StatusCode previousStatusCode = relationship.getStatusCode();
+            relationship.setStatusCode(statusCode);
+            relationship.setPreviousStatusCode(previousStatusCode);
+            relationship.setStatusChangeId(operation.getUuid());
+            Relationship reverseRelationship = relationshipRepository.findByUserIdAndRelatedUserId(userId, relatedUserId);
+            StatusCode revereStatusCode = relationship.getPreviousStatusCode();
+            StatusCode reversePreviousStatusCode = relationship.getStatusCode();
+            reverseRelationship.setStatusCode(revereStatusCode);
+            reverseRelationship.setPreviousStatusCode(reversePreviousStatusCode);
+            reverseRelationship.setStatusChangeId(operation.getUuid());
+            return relationship;
     }
 
     @Override
@@ -66,7 +78,9 @@ public class FriendServiceImpl implements FriendService {
         log.info("blockFriend execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
             Operation operation = createOperation(userId, relatedUserId, OperationType.BLOCKING);
-            return makeRelationship(userId, relatedUserId, StatusCode.BLOCKED, operation);
+            Relationship relationship = makeRelationship(userId, relatedUserId, StatusCode.BLOCKED, operation);
+            Relationship reverseRelationship = makeRelationship(relatedUserId, userId, StatusCode.NONE, operation);
+            return relationship;
     }
 
     @Override
@@ -89,8 +103,8 @@ public class FriendServiceImpl implements FriendService {
         log.info("subscribeToFriend execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         Operation operation = createOperation(userId, relatedUserId, OperationType.SUBSCRIPTION);
-        Relationship relationship = makeRelationship(userId, relatedUserId, StatusCode.SUBSCRIBED, operation);
-        saveReverseRelationship(relatedUserId, userId, StatusCode.WATCHING, operation);
+        Relationship relationship = makeRelationship(userId, relatedUserId, StatusCode.WATCHING, operation);
+        saveReverseRelationship(relatedUserId, userId, StatusCode.SUBSCRIBED, operation);
         return relationship;
     }
 
@@ -108,9 +122,6 @@ public class FriendServiceImpl implements FriendService {
         if (id != null){
             spec = spec.and(FriendsSpecifications.operationIdEquals(UUID.fromString(id)));
         }
-//        if (isDeleted != null) {
-//            spec = spec.and(FriendsSpecifications.friendIsDelete(String.valueOf(StatusCode.NONE)));
-//        }
 
         if (idTo != null){
             spec = spec.and(FriendsSpecifications.friendIdToEquals(UUID.fromString(idTo)));
@@ -125,10 +136,6 @@ public class FriendServiceImpl implements FriendService {
         return relationshipRepository.findAll(spec, PageRequest.of(page - 1, size));
 
     }
-
-
-
-
 
     @Override
     public Relationship getFriendshipNote(String token, UUID relatedUserId) {
