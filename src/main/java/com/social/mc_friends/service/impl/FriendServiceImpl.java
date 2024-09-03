@@ -101,7 +101,10 @@ public class FriendServiceImpl implements FriendService {
         log.info("getFriendList execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         Specification<Relationship> spec = Specification.where(null);
-        spec = spec.and(FriendsSpecifications.userIdEquals(userId));
+        log.info("userId = " + userId);
+        if (token != null){
+            spec = spec.and(FriendsSpecifications.userIdEquals(userId));
+        }
         if (id != null){
             spec = spec.and(FriendsSpecifications.operationIdEquals(UUID.fromString(id)));
         }
