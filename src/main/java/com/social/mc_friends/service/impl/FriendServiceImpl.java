@@ -66,8 +66,8 @@ public class FriendServiceImpl implements FriendService {
             relationship.setStatusChangeId(operation.getUuid());
             relationshipRepository.save(relationship);
             Relationship reverseRelationship = relationshipRepository.findByUserIdAndRelatedUserId(userId, relatedUserId);
-            StatusCode revereStatusCode = relationship.getPreviousStatusCode();
-            StatusCode reversePreviousStatusCode = relationship.getStatusCode();
+            StatusCode revereStatusCode = reverseRelationship.getPreviousStatusCode();
+            StatusCode reversePreviousStatusCode = reverseRelationship.getStatusCode();
             reverseRelationship.setStatusCode(revereStatusCode);
             reverseRelationship.setPreviousStatusCode(reversePreviousStatusCode);
             reverseRelationship.setStatusChangeId(operation.getUuid());
