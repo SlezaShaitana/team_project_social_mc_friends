@@ -2,12 +2,13 @@ package com.social.mc_friends.model;
 
 import com.social.mc_friends.dto.StatusCode;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "relationship"/*,indexes = {@Index(name = "friendIndex", columnList = "user_id, related_user_id", unique = true)}*/)
 public class Relationship {

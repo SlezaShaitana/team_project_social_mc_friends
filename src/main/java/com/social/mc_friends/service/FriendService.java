@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface FriendService {
-    Relationship confirmFriendRequest(String token, UUID uuid) throws UserException;
+//    Relationship confirmFriendRequest(String token, UUID uuid) throws UserException;
+FriendShortDto confirmFriendRequest(String token, UUID uuid) throws UserException;
 
     Relationship unblockFriend(String token, UUID uuid) throws UserException;
 

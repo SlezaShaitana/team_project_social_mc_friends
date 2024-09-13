@@ -1,12 +1,14 @@
 package com.social.mc_friends.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.UUID;
 @Data
 @Entity
 @Table(name = "operations",indexes = {@Index(name = "blockingIndex", columnList = "user_id, related_id")})
+@NoArgsConstructor
+@AllArgsConstructor
 public class Operation {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

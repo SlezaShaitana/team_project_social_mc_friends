@@ -12,9 +12,7 @@ import com.social.mc_friends.service.FriendService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,9 +34,24 @@ public class FriendServiceImpl implements FriendService {
     private final JwtUtils jwtUtils;
     private final KafkaProducer kafkaProducer;
 
+//    @Override
+//    @Transactional
+//    public Relationship confirmFriendRequest(String token, UUID relatedUserId) throws UserException{
+//            log.info("confirmFriendRequest execution started");
+//            UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
+//            User user = userRepository.findByUserId(userId);
+//            Operation operation = createOperation(userId, relatedUserId, OperationType.FRIENDSHIP_CONFIRMATION);
+//            Relationship relationship = makeRelationship(userId,  relatedUserId, StatusCode.FRIEND, operation);
+//            saveReverseRelationship(relatedUserId, userId, StatusCode.FRIEND, operation);
+//            NotificationDto notificationDto = makeNotificationDto(userId, relatedUserId, operation);
+//            notificationDto.setNotificationType(NotificationType.FRIEND_REQUEST_CONFIRMATION);
+//            notificationDto.setContent("Пользователь " + user.getFirstName() + " "  + user.getLastName() + " добавил Вас в друзья");
+//            kafkaProducer.sendNotificationMessage(notificationDto);
+//            return relationship;
+//    }
     @Override
-    @Transactional
-    public Relationship confirmFriendRequest(String token, UUID relatedUserId) throws UserException{
+//    @Transactional
+    public FriendShortDto confirmFriendRequest(String token, UUID relatedUserId) throws UserException{
             log.info("confirmFriendRequest execution started");
             UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
             User user = userRepository.findByUserId(userId);
@@ -48,9 +60,9 @@ public class FriendServiceImpl implements FriendService {
             saveReverseRelationship(relatedUserId, userId, StatusCode.FRIEND, operation);
             NotificationDto notificationDto = makeNotificationDto(userId, relatedUserId, operation);
             notificationDto.setNotificationType(NotificationType.FRIEND_REQUEST_CONFIRMATION);
-            notificationDto.setContent("Пользователь " + user.getFirstName() + user.getLastName() + " добавил Вас в друзья");
+            notificationDto.setContent("Пользователь " + user.getFirstName() + " "  + user.getLastName() + " добавил Вас в друзья");
             kafkaProducer.sendNotificationMessage(notificationDto);
-            return relationship;
+            return new FriendShortDto(relationship);
     }
 
     @Override
