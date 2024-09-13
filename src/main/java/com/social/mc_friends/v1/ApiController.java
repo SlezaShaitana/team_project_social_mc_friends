@@ -52,7 +52,7 @@ public class ApiController {
                                                         @PathVariable("id") String id){
         UUID uuid = UUID.fromString(id);
         try {
-            return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.unblockFriend(headerAuth, uuid)));
+            return ResponseEntity.ok(friendService.unblockFriend(headerAuth, uuid));
         } catch (UserException e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -62,7 +62,7 @@ public class ApiController {
                                                        @PathVariable("id") String id){
         UUID uuid = UUID.fromString(id);
         try {
-            return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.blockFriend(headerAuth, uuid)));
+            return ResponseEntity.ok(friendService.blockFriend(headerAuth, uuid));
         } catch (UserException e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -72,7 +72,7 @@ public class ApiController {
                                                               @PathVariable("id") String id){
         UUID uuid = UUID.fromString(id);
         try {
-            return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.createFriendRequest(headerAuth, uuid)));
+            return ResponseEntity.ok(friendService.createFriendRequest(headerAuth, uuid));
         } catch (UserException e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -83,7 +83,7 @@ public class ApiController {
                                                             @PathVariable("id") String id){
         UUID uuid = UUID.fromString(id);
         try {
-            return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.subscribeToFriend(headerAuth, uuid)));
+            return ResponseEntity.ok(friendService.subscribeToFriend(headerAuth, uuid));
         } catch (UserException e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -101,14 +101,14 @@ public class ApiController {
         if (page < 1){
             page = 1;
         }
-        return friendService.getFriendList(headerAuth, id, isDeleted, statusCode, idTo, previousStatusCode, page, size).map(FriendShortDto::new);
+        return friendService.getFriendList(headerAuth, id, isDeleted, statusCode, idTo, previousStatusCode, page, size);
 
     }
     @GetMapping("/{id}")
     public ResponseEntity<FriendShortDto> getFriendshipNote(@RequestHeader("Authorization") String headerAuth,
                                                             @PathVariable("id") String id){
         UUID uuid = UUID.fromString(id);
-        return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.getFriendshipNote(headerAuth, uuid)));
+        return ResponseEntity.ok(friendService.getFriendshipNote(headerAuth, uuid));
     }
     @DeleteMapping("/{id}")
     public ResponseEntity deleteFriend(@RequestHeader("Authorization") String headerAuth,
@@ -133,7 +133,7 @@ public class ApiController {
     }
     @GetMapping("/count")
     public ResponseEntity<CountDto> getFriendRequestCount(@RequestHeader("Authorization") String headerAuth){
-        return ResponseEntity.ok(new CountDto(friendService.getFriendRequestCount(headerAuth)));
+        return ResponseEntity.ok(friendService.getFriendRequestCount(headerAuth));
     }
     @GetMapping("/check")
     public ResponseEntity<List<StatusCode>> getStatuses(List<UUID> ids){
@@ -145,9 +145,7 @@ public class ApiController {
     }
     @GetMapping("/recommendations")
     public ResponseEntity<List<FriendShortDto>> getRecommendations(@RequestBody(required = false) FriendSearchDto searchDto){
-        return ResponseEntity.ok(friendService.getRecommendations(searchDto).stream()
-                .map(mapper::mapToFriendShortDto)
-                .collect(Collectors.toList()));
+        return ResponseEntity.ok(friendService.getRecommendations(searchDto));
     }
 
 }

@@ -10,34 +10,33 @@ import java.util.List;
 import java.util.UUID;
 
 public interface FriendService {
-//    Relationship confirmFriendRequest(String token, UUID uuid) throws UserException;
-FriendShortDto confirmFriendRequest(String token, UUID uuid) throws UserException;
+    FriendShortDto confirmFriendRequest(String token, UUID uuid) throws UserException;
 
-    Relationship unblockFriend(String token, UUID uuid) throws UserException;
+    FriendShortDto unblockFriend(String token, UUID uuid) throws UserException;
 
-    Relationship blockFriend(String token, UUID uuid) throws UserException;
+    FriendShortDto blockFriend(String token, UUID uuid) throws UserException;
 
-    Relationship createFriendRequest(String token, UUID uuid) throws UserException;
+    FriendShortDto createFriendRequest(String token, UUID uuid) throws UserException;
 
-    Relationship subscribeToFriend(String token, UUID uuid) throws UserException;
+    FriendShortDto subscribeToFriend(String token, UUID uuid) throws UserException;
 
-    Page<Relationship> getFriendList(String token, String id, String isDeleted,
+    Page<FriendShortDto> getFriendList(String token, String id, String isDeleted,
                                      String statusCode, String idTo, String previousStatusCode, Integer page, Integer size);
 
-    Relationship getFriendshipNote(String token, UUID uuid);
+    FriendShortDto getFriendshipNote(String token, UUID uuid);
 
     void deleteFriend(String token, UUID uuid);
 
     List<UUID> getUserIdList(String token, String status);
 
 //    List<Relationship> getRecommendations(FriendSearchDto searchDto);
-    List<User> getRecommendations(FriendSearchDto searchDto);
+    List<FriendShortDto> getRecommendations(FriendSearchDto searchDto);
 
     List<UUID> getAllFriendsIdList(String token);
 
     List<UUID> getFriendsIdListByUserId(UUID userId);
 
-    Integer getFriendRequestCount(String token);
+    CountDto getFriendRequestCount(String token);
 
     List<StatusCode> getStatuses(List<UUID> ids);
 

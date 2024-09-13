@@ -4,6 +4,7 @@ package com.social.mc_friends.service.impl;
 import com.social.mc_friends.dto.*;
 import com.social.mc_friends.exceptons.UserException;
 import com.social.mc_friends.kafka.KafkaProducer;
+import com.social.mc_friends.mapper.Mapper;
 import com.social.mc_friends.model.*;
 import com.social.mc_friends.repository.*;
 import com.social.mc_friends.repository.specificftions.FriendsSpecifications;
@@ -22,6 +23,7 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,24 +35,11 @@ public class FriendServiceImpl implements FriendService {
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
     private final KafkaProducer kafkaProducer;
+    private final Mapper mapper;
 
-//    @Override
-//    @Transactional
-//    public Relationship confirmFriendRequest(String token, UUID relatedUserId) throws UserException{
-//            log.info("confirmFriendRequest execution started");
-//            UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
-//            User user = userRepository.findByUserId(userId);
-//            Operation operation = createOperation(userId, relatedUserId, OperationType.FRIENDSHIP_CONFIRMATION);
-//            Relationship relationship = makeRelationship(userId,  relatedUserId, StatusCode.FRIEND, operation);
-//            saveReverseRelationship(relatedUserId, userId, StatusCode.FRIEND, operation);
-//            NotificationDto notificationDto = makeNotificationDto(userId, relatedUserId, operation);
-//            notificationDto.setNotificationType(NotificationType.FRIEND_REQUEST_CONFIRMATION);
-//            notificationDto.setContent("Пользователь " + user.getFirstName() + " "  + user.getLastName() + " добавил Вас в друзья");
-//            kafkaProducer.sendNotificationMessage(notificationDto);
-//            return relationship;
-//    }
+
     @Override
-//    @Transactional
+    @Transactional
     public FriendShortDto confirmFriendRequest(String token, UUID relatedUserId) throws UserException{
             log.info("confirmFriendRequest execution started");
             UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
@@ -60,13 +49,14 @@ public class FriendServiceImpl implements FriendService {
             saveReverseRelationship(relatedUserId, userId, StatusCode.FRIEND, operation);
             NotificationDto notificationDto = makeNotificationDto(userId, relatedUserId, operation);
             notificationDto.setNotificationType(NotificationType.FRIEND_REQUEST_CONFIRMATION);
-            notificationDto.setContent("Пользователь " + user.getFirstName() + " "  + user.getLastName() + " добавил Вас в друзья");
+            notificationDto.setContent(" добавил Вас в друзья");
             kafkaProducer.sendNotificationMessage(notificationDto);
             return new FriendShortDto(relationship);
     }
 
     @Override
-    public Relationship unblockFriend(String token, UUID relatedUserId) throws UserException {
+    @Transactional
+    public FriendShortDto unblockFriend(String token, UUID relatedUserId) throws UserException {
             log.info("unblockFriend execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
             Operation operation = createOperation(userId, relatedUserId, OperationType.UNBLOCKING);
@@ -84,21 +74,21 @@ public class FriendServiceImpl implements FriendService {
             reverseRelationship.setPreviousStatusCode(reversePreviousStatusCode);
             reverseRelationship.setStatusChangeId(operation.getUuid());
             relationshipRepository.save(reverseRelationship);
-            return relationship;
+            return new FriendShortDto(relationship);
     }
 
     @Override
-    public Relationship blockFriend(String token, UUID relatedUserId) throws UserException {
+    public FriendShortDto blockFriend(String token, UUID relatedUserId) throws UserException {
         log.info("blockFriend execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
             Operation operation = createOperation(userId, relatedUserId, OperationType.BLOCKING);
             Relationship relationship = makeRelationship(userId, relatedUserId, StatusCode.BLOCKED, operation);
             Relationship reverseRelationship = makeRelationship(relatedUserId, userId, StatusCode.NONE, operation);
-            return relationship;
+            return new FriendShortDto(relationship);
     }
 
     @Override
-    public Relationship createFriendRequest(String token, UUID relatedUserId) throws UserException {
+    public FriendShortDto createFriendRequest(String token, UUID relatedUserId) throws UserException {
         log.info("createFriendRequest execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         User user = userRepository.findByUserId(userId);
@@ -107,24 +97,24 @@ public class FriendServiceImpl implements FriendService {
         saveReverseRelationship(relatedUserId, userId, StatusCode.REQUEST_FROM, operation);
         NotificationDto notificationDto = makeNotificationDto(userId, relatedUserId, operation);
         notificationDto.setNotificationType(NotificationType.FRIEND_REQUEST);
-        notificationDto.setContent("Пользователь " + user.getFirstName() + " " + user.getLastName() + " отправил Вам запрос на добавление в друзья");
+        notificationDto.setContent("Вам отправлен запрос на добавление в друзья от ");
         kafkaProducer.sendNotificationMessage(notificationDto);
-        return relationship;
+        return new FriendShortDto(relationship);
     }
 
     @Override
-    public Relationship subscribeToFriend(String token, UUID relatedUserId) throws UserException {
+    public FriendShortDto subscribeToFriend(String token, UUID relatedUserId) throws UserException {
         log.info("subscribeToFriend execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
         Operation operation = createOperation(userId, relatedUserId, OperationType.SUBSCRIPTION);
         Relationship relationship = makeRelationship(userId, relatedUserId, StatusCode.WATCHING, operation);
         saveReverseRelationship(relatedUserId, userId, StatusCode.SUBSCRIBED, operation);
-        return relationship;
+        return new FriendShortDto(relationship);
     }
 
 
     @Override
-    public Page<Relationship> getFriendList(String token, String id, String isDeleted,
+    public Page<FriendShortDto> getFriendList(String token, String id, String isDeleted,
                                             String statusCode, String idTo, String previousStatusCode, Integer page, Integer size) {
         log.info("getFriendList execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
@@ -147,15 +137,15 @@ public class FriendServiceImpl implements FriendService {
         if (previousStatusCode != null){
             spec = spec.and(FriendsSpecifications.friendsPreviousStatusEquals(StatusCode.valueOf(previousStatusCode)));
         }
-        return relationshipRepository.findAll(spec, PageRequest.of(page - 1, size));
+        return relationshipRepository.findAll(spec, PageRequest.of(page - 1, size)).map(FriendShortDto::new);
 
     }
 
     @Override
-    public Relationship getFriendshipNote(String token, UUID relatedUserId) {
+    public FriendShortDto getFriendshipNote(String token, UUID relatedUserId) {
         log.info("getFriendshipNote execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
-        return relationshipRepository.findByUserIdAndRelatedUserId(userId, relatedUserId);
+        return new FriendShortDto(relationshipRepository.findByUserIdAndRelatedUserId(userId, relatedUserId));
     }
 
     @Override
@@ -199,11 +189,11 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Integer getFriendRequestCount(String token) {
+    public CountDto getFriendRequestCount(String token) {
         log.info("getFriendRequestCount execution started");
         UUID userId = UUID.fromString(jwtUtils.getId(getToken(token)));
        List<Relationship> relationshipList = relationshipRepository.findByUserIdAndStatusCode(userId);
-        return relationshipList.size();
+        return new CountDto(relationshipList.size());
     }
 
     @Override
@@ -224,10 +214,10 @@ public class FriendServiceImpl implements FriendService {
 //        //return relationshipRepository.findAllFriends(UUID.fromString(searchDto.getIdTo()));
 //    }
     @Override
-    public List<User> getRecommendations(FriendSearchDto searchDto) {
+    public List<FriendShortDto> getRecommendations(FriendSearchDto searchDto) {
         log.info("getRecommendations execution started");
         log.info("Check for update");
-        return userRepository.findAll();
+        return userRepository.findAll().stream().map(mapper::mapToFriendShortDto)  .collect(Collectors.toList());
     }
 
     private Operation createOperation(UUID userId, UUID relatedUserId, OperationType operationType){
