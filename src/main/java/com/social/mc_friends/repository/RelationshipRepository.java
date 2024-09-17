@@ -1,8 +1,6 @@
 package com.social.mc_friends.repository;
 
-import com.social.mc_friends.dto.StatusCode;
 import com.social.mc_friends.model.Relationship;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;

@@ -15,6 +15,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -267,33 +270,34 @@ public class ApiControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(friendShortDtoList)));
     }
 
-//    @Test
-//    @DisplayName("Test get friendList")
-//    void getFriendListTest() throws Exception {
-//        String authorization = "token";
-//        UUID relationshipId = UUID.fromString("c933556b-46f6-4254-bed2-8a45cbec10c4");
-//        String userId = "7982a7ce-fb47-4532-b2c1-e8c01f8fa844";
-//        String id = "12feafdd-3f5d-486a-b15c-a58153eac15d";
-//        UUID statusChangeId = UUID.fromString("54ae1eff-b4c2-4b84-9a87-ffb5197f37e5");
-//        String statusCode = "REQUEST_FROM";
-//
-//        Relationship relationship = new Relationship(relationshipId, UUID.fromString(userId)
-//                , UUID.fromString(id), StatusCode.REQUEST_FROM, StatusCode.NONE, statusChangeId, 0);
-//        FriendShortDto friendShortDto = new FriendShortDto(relationship);
-//        List<FriendShortDto> freindList = new ArrayList<>();
-//        for(int i = 0; i <=2; i++){
-//            freindList.add(friendShortDto);
-//        }
-//        Page<FriendShortDto> pageFriendList = new FriendShortDtoPageImpl(freindList);
-//        doReturn(pageFriendList).when(friendService.getFriendList(authorization, null,null, statusCode, null, null, null, 3));
-//
-//        mockMvc.perform(get("/api/v1/friends")
-//                .header("Authorization", authorization)
-//                .param("statusCode", statusCode)
-//                .contentType(org.springframework.http.MediaType.APPLICATION_JSON))
-//                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(pageFriendList)));
-//
-//    }
+    @Test
+    @DisplayName("Test get friendList")
+    void getFriendListTest() throws Exception {
+        String authorization = "token";
+        UUID relationshipId = UUID.fromString("c933556b-46f6-4254-bed2-8a45cbec10c4");
+        String userId = "7982a7ce-fb47-4532-b2c1-e8c01f8fa844";
+        String id = "12feafdd-3f5d-486a-b15c-a58153eac15d";
+        UUID statusChangeId = UUID.fromString("54ae1eff-b4c2-4b84-9a87-ffb5197f37e5");
+        String statusCode = "REQUEST_FROM";
+
+        Relationship relationship = new Relationship(relationshipId, UUID.fromString(userId)
+                , UUID.fromString(id), StatusCode.REQUEST_FROM, StatusCode.NONE, statusChangeId, 0);
+        FriendShortDto friendShortDto = new FriendShortDto(relationship);
+        List<FriendShortDto> freindList = new ArrayList<>();
+        for(int i = 0; i <=2; i++){
+            freindList.add(friendShortDto);
+        }
+        Pageable pageable = PageRequest.of(0, 3, Sort.unsorted());
+        Page<FriendShortDto> pageFriendList = new FriendShortDtoPageImpl(freindList, pageable, 3);
+        when(friendService.getFriendList(authorization, null, null, statusCode, null, null, 1, null)).thenReturn(pageFriendList);
+
+        mockMvc.perform(get("/api/v1/friends")
+                .header("Authorization", authorization)
+                .param("statusCode", statusCode)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(pageFriendList)));
+
+    }
 
 
 }

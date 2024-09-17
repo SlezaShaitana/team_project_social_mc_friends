@@ -1,15 +1,11 @@
 package com.social.mc_friends.mapper;
 import com.social.mc_friends.dto.FriendShortDto;
 import com.social.mc_friends.dto.StatusCode;
-import com.social.mc_friends.dto.UserShortDto;
 import com.social.mc_friends.model.Relationship;
 import com.social.mc_friends.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -22,7 +18,7 @@ public class Mapper {
 //        return userShortDto;
 //    }
     public FriendShortDto mapToFriendShortDto(Relationship relationship){
-        FriendShortDto friendShortDto = new FriendShortDto();
+        FriendShortDto friendShortDto = new FriendShortDto(UUID.randomUUID(), StatusCode.FRIEND, UUID.randomUUID(), UUID.randomUUID(), StatusCode.NONE, 0);
         friendShortDto.setId(String.valueOf(relationship.getStatusChangeId()));
 //        friendShortDto.setId(String.valueOf(relationship.getUserId()));
         friendShortDto.setDeleted(false);
@@ -33,7 +29,7 @@ public class Mapper {
         return friendShortDto;
     }
     public FriendShortDto mapToFriendShortDto(User user){
-        FriendShortDto friendShortDto = new FriendShortDto();
+        FriendShortDto friendShortDto = new FriendShortDto(UUID.randomUUID(), StatusCode.FRIEND, UUID.randomUUID(), UUID.randomUUID(), StatusCode.NONE, 0);
         friendShortDto.setId(String.valueOf(UUID.randomUUID()));
 //        friendShortDto.setId(String.valueOf(relationship.getUserId()));
         friendShortDto.setDeleted(false);

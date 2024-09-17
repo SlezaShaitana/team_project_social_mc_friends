@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.social.mc_friends.model.Relationship;
 import lombok.Data;
-import lombok.ToString;
+
+import java.util.UUID;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -22,7 +23,7 @@ private String previousStatusCode;
  @JsonProperty("rating")
 private int rating;
 
-public FriendShortDto(){
+public FriendShortDto(UUID uuid, StatusCode friend, UUID randomUUID, UUID randomed, StatusCode none, int i){
 
 }
 public FriendShortDto(Relationship relationship){

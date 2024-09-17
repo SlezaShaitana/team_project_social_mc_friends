@@ -1,17 +1,14 @@
 package com.social.mc_friends.service.impl;
-
 import com.social.mc_friends.dto.*;
 import com.social.mc_friends.exceptons.UserException;
 import com.social.mc_friends.kafka.KafkaProducer;
 import com.social.mc_friends.mapper.Mapper;
 import com.social.mc_friends.model.Operation;
-import com.social.mc_friends.model.OperationType;
 import com.social.mc_friends.model.Relationship;
 import com.social.mc_friends.model.User;
 import com.social.mc_friends.repository.OperationRepository;
 import com.social.mc_friends.repository.RelationshipRepository;
 import com.social.mc_friends.repository.UserRepository;
-import com.social.mc_friends.repository.specificftions.FriendsSpecifications;
 import com.social.mc_friends.security.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,15 +18,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.cloud.context.named.NamedContextFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -55,7 +46,6 @@ class FriendServiceImplTest {
     private Mapper mapper;
     @InjectMocks
     private FriendServiceImpl friendService;
-
 
     @BeforeEach
     void setUp(){
@@ -263,7 +253,6 @@ class FriendServiceImplTest {
     @DisplayName("Test get friendRequest count")
     public void getFriendRequestCountTest(){
         String authorization = "Bearer mockJwtToken";
-        String statusCode = "FRIEND";
         UUID userId = UUID.fromString("12feafdd-3f5d-486a-b15c-a58153eac15d");
         UUID userId1 = UUID.fromString("7982a7ce-fb47-4532-b2c1-e8c01f8fa844");
         Relationship relationship = new Relationship(UUID.randomUUID(), userId, UUID.randomUUID(), StatusCode.REQUEST_FROM, StatusCode.NONE, UUID.randomUUID(), 0);
@@ -348,8 +337,6 @@ class FriendServiceImplTest {
         assertEquals(3, result.size());
         verify(relationshipRepository, times(1)).findBlockingFriendsId(relatedUserId);
 
-
-
     }
     @Test
     @DisplayName("Test get recommendations")
@@ -371,38 +358,36 @@ class FriendServiceImplTest {
         verify(userRepository, times(1)).findAll();
 
     }
+    @Test
+    @DisplayName("Test get friendList")
+    public void getFriendListTest(){
+        String authorization = "Bearer mockJwtToken";
+        UUID userId = UUID.fromString("12feafdd-3f5d-486a-b15c-a58153eac15d");
 
-    /*доделатть*/
-//    @Test
-//    @DisplayName("Test get friendList")
-//    public void getFriendListTest(){
-//        String authorization = "Bearer mockJwtToken";
-//        UUID userId = UUID.fromString("12feafdd-3f5d-486a-b15c-a58153eac15d");
-//
-//        Integer page = 0;
-//        Integer size = 3;
-//        String id = null;
-//        String isDeleted = null;
-//        String  statusCode = "FRIEND";
-//        String idTo = null;
-//        String previousStatusCode = null;
-//
-//        List<Relationship> friendList = new ArrayList<>();
-//        friendList.add(new Relationship(UUID.randomUUID(), userId, UUID.randomUUID(), StatusCode.FRIEND, StatusCode.NONE, UUID.randomUUID(), 0));
-//        friendList.add(new Relationship(UUID.randomUUID(), userId, UUID.randomUUID(), StatusCode.FRIEND, StatusCode.NONE, UUID.randomUUID(), 0));
-//
-//        Page<Relationship> pageFriendList = new RelationshipPageImpl(friendList);
-//
-//        when(jwtUtils.getId(any())).thenReturn(userId.toString());
-//        when(relationshipRepository.findAll(any(Specification.class), PageRequest.of(anyInt(), anyInt()))).thenReturn(pageFriendList);
-//
-//        Page<FriendShortDto> result = friendService.getFriendList(authorization, id, isDeleted, statusCode, idTo, previousStatusCode, page, size);
-//
-//        assertNotNull(result);
-//        assertEquals(2, result.getTotalElements());
-//        verify(relationshipRepository, times(1)).findAll(any(Specification.class), PageRequest.of(anyInt(), anyInt()));
-//
-//        }
+        Integer page = 1;
+        Integer size = 3;
+        String id = null;
+        String isDeleted = null;
+        String  statusCode = "FRIEND";
+        String idTo = null;
+        String previousStatusCode = null;
+
+        List<Relationship> friendList = new ArrayList<>();
+        friendList.add(new Relationship(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), StatusCode.FRIEND, StatusCode.NONE, UUID.randomUUID(), 0));
+        friendList.add(new Relationship(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), StatusCode.FRIEND, StatusCode.NONE, UUID.randomUUID(), 0));
+
+        Pageable pageable = PageRequest.of(0, 3, Sort.unsorted());
+        Page<Relationship> pageFriendList = new RelationshipPageImpl(friendList, pageable, 2);
+
+        when(jwtUtils.getId(any())).thenReturn(userId.toString());
+        when(relationshipRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(pageFriendList);
+
+        Page<FriendShortDto> result = friendService.getFriendList(authorization, id, isDeleted, statusCode, idTo, previousStatusCode, page, size);
+        assertNotNull(result);
+        assertEquals(2, result.getTotalElements());
+        verify(relationshipRepository, times(1)).findAll(any(Specification.class), eq(pageable));
+
+        }
 
 
 }

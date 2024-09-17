@@ -22,6 +22,7 @@ public class RelationshipPageImpl extends PageImpl<Relationship> {
                                 @JsonProperty("totalPages") int totalPages,
                                 @JsonProperty("sort") JsonNode sort,
                                 @JsonProperty("numberOfElements") int numberOfElements){
+
         super(content, PageRequest.of(
                 pageable.get("page").asInt(),
                 pageable.get("size").asInt()

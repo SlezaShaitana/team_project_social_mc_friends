@@ -90,7 +90,7 @@ public class ApiController {
 
     }
     @GetMapping
-    public Page<FriendShortDto> getFriendList(@RequestHeader("Authorization") String headerAuth,
+    public ResponseEntity<Page<FriendShortDto>> getFriendList(@RequestHeader("Authorization") String headerAuth,
                                               @RequestParam(name = "id", required = false) String id,
                                               @RequestParam(name = "isDeleted", required = false) String isDeleted,
                                               @RequestParam(name = "statusCode", required = false) String statusCode,
@@ -101,7 +101,7 @@ public class ApiController {
         if (page < 1){
             page = 1;
         }
-        return friendService.getFriendList(headerAuth, id, isDeleted, statusCode, idTo, previousStatusCode, page, size);
+        return ResponseEntity.ok(friendService.getFriendList(headerAuth, id, isDeleted, statusCode, idTo, previousStatusCode, page, size));
 
     }
     @GetMapping("/{id}")
