@@ -83,7 +83,7 @@ class FriendServiceImplTest {
         assertEquals(String.valueOf(relationship.getPreviousStatusCode()), result.getPreviousStatusCode());
 
         verify(jwtUtils, times(1)).getId(any());
-        verify(userRepository, times(5)).findByUserId(any(UUID.class));
+        verify(userRepository, times(4)).findByUserId(any(UUID.class));
         verify(relationshipRepository, times(2)).save(any(Relationship.class));
         verify(operationRepository, times(1)).save(any(Operation.class));
         verify(kafkaProducer, times(1)).sendNotificationMessage(any(NotificationDto.class));
@@ -175,7 +175,7 @@ class FriendServiceImplTest {
         assertEquals(result.getPreviousStatusCode(), String.valueOf(StatusCode.NONE));
 
         verify(jwtUtils, times(1)).getId(any());
-        verify(userRepository, times(5)).findByUserId(any(UUID.class));
+        verify(userRepository, times(4)).findByUserId(any(UUID.class));
         verify(relationshipRepository, times(2)).save(any(Relationship.class));
         verify(operationRepository, times(1)).save(any(Operation.class));
         verify(kafkaProducer, times(1)).sendNotificationMessage(any(NotificationDto.class));

@@ -11,16 +11,10 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class Mapper {
-//        public UserShortDto mapToUserShortDto(User user){
-//        UserShortDto userShortDto = new UserShortDto();
-//        userShortDto.setId(String.valueOf(user.getUuid()));
-//        userShortDto.setName(user.getName());
-//        return userShortDto;
-//    }
+
     public FriendShortDto mapToFriendShortDto(Relationship relationship){
         FriendShortDto friendShortDto = new FriendShortDto(UUID.randomUUID(), StatusCode.FRIEND, UUID.randomUUID(), UUID.randomUUID(), StatusCode.NONE, 0);
         friendShortDto.setId(String.valueOf(relationship.getStatusChangeId()));
-//        friendShortDto.setId(String.valueOf(relationship.getUserId()));
         friendShortDto.setDeleted(false);
         friendShortDto.setStatusCode(String.valueOf(relationship.getStatusCode()));
         friendShortDto.setFriendId(String.valueOf(relationship.getRelatedUserId()));
@@ -31,7 +25,6 @@ public class Mapper {
     public FriendShortDto mapToFriendShortDto(User user){
         FriendShortDto friendShortDto = new FriendShortDto(UUID.randomUUID(), StatusCode.FRIEND, UUID.randomUUID(), UUID.randomUUID(), StatusCode.NONE, 0);
         friendShortDto.setId(String.valueOf(UUID.randomUUID()));
-//        friendShortDto.setId(String.valueOf(relationship.getUserId()));
         friendShortDto.setDeleted(false);
         friendShortDto.setStatusCode(String.valueOf(StatusCode.NONE));
         friendShortDto.setFriendId(String.valueOf(user.getUserId()));

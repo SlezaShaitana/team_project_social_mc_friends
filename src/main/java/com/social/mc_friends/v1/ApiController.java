@@ -26,17 +26,7 @@ public class ApiController {
     private final FriendServiceImpl friendService;
     private final Mapper mapper;
 
-//    @PutMapping("/{id}/approve")
-//    public ResponseEntity<FriendShortDto> confirmFriendRequest(@RequestHeader("Authorization") String headerAuth,
-//                                                               @PathVariable("id") String id){
-//        UUID uuid = UUID.fromString(id);
-//        try {
-//            return ResponseEntity.ok(mapper.mapToFriendShortDto(friendService.confirmFriendRequest(headerAuth, uuid)));
-//        } catch (UserException e){
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
+//
     @PutMapping("/{id}/approve")
     public ResponseEntity<FriendShortDto> confirmFriendRequest(@RequestHeader("Authorization") String headerAuth,
                                                                @PathVariable("id") String id){
